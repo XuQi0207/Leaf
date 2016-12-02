@@ -1,0 +1,86 @@
+CNS_ACCESS(3)         Cns Library Functions         CNS_ACCESS(3)
+
+
+
+NNAAMMEE
+       Cns_access    -   check   existence/accessibility   of   a
+       file/directory
+
+SSYYNNOOPPSSIISS
+       Under Unix:
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee <<uunniissttdd..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       Under Windows/NT:
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##ddeeffiinnee RR__OOKK 44
+       ##ddeeffiinnee WW__OOKK 22
+       ##ddeeffiinnee XX__OOKK 11
+       ##ddeeffiinnee FF__OOKK 00
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       iinntt CCnnss__aacccceessss ((ccoonnsstt cchhaarr **_p_a_t_h,, iinntt _a_m_o_d_e));;
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__aacccceessss checks in the name server  database  the  exis­
+       tence  or  the  accessibility  of  the file/directory _p_a_t_h
+       according to the bit pattern in _a_m_o_d_e using the real  user
+       ID.
+
+       _p_a_t_h   specifies the logical pathname relative to the cur­
+              rent CASTOR directory or the full CASTOR  pathname.
+
+       _a_m_o_d_e  the  bit pattern is built by an OR of the constants
+              defined  in  <uunniissttdd..hh>  under  Unix   or   to   be
+              explicitely defined under Windows/NT:
+
+              RR__OOKK   test for read permission
+
+              WW__OOKK   test for write permission
+
+              XX__OOKK   test for search/execute permission
+
+              FF__OOKK   test for existence of the directory/file.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EENNOOEENNTT       The named file/directory does not exist.
+
+       EEAACCCCEESS       Search permission is denied on a component of
+                    the _p_a_t_h prefix or specified  access  to  the
+                    file itself is denied.
+
+       EEFFAAUULLTT       _p_a_t_h is a NULL pointer.
+
+       EENNOOTTDDIIRR      A  component  of  _p_a_t_h prefix is not a direc­
+                    tory.
+
+       EEIINNVVAALL       _a_m_o_d_e is invalid.
+
+       EENNAAMMEETTOOOOLLOONNGG The length of _p_a_t_h exceeds  CCAA__MMAAXXPPAATTHHLLEENN  or
+                    the   length  of  a  _p_a_t_h  component  exceeds
+                    CCAA__MMAAXXNNAAMMEELLEENN.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__cchhddiirr((33)), CCnnss__cchhmmoodd((33)), CCnnss__ssttaatt((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:51          CNS_ACCESS(3)

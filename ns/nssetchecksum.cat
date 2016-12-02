@@ -1,0 +1,60 @@
+NSSETCHECKSUM(1)        Cns User Commands        NSSETCHECKSUM(1)
+
+
+
+NNAAMMEE
+       nssetchecksum  -  Sets  or  resets the checksum for a tape
+       segment.
+
+SSYYNNOOPPSSIISS
+       nnsssseettcchheecckkssuumm  ----ccooppyynnoo   copy_number   ----sseeggmmeennttnnoo   seg­
+       ment_number   [----uuppddaattee]   ----cchheecckkssuumm__nnaammee   checksum_name
+       ----cchheecckkssuumm checksum _p_a_t_h...
+
+       nnsssseettcchheecckkssuumm  ----ccooppyynnoo   copy_number   ----sseeggmmeennttnnoo   seg­
+       ment_number ----ccllrr _p_a_t_h...
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsssseettcchheecckkssuumm  Sets or resets the checksum for a tape seg­
+       ment. Requires the ADMIN privilege  in  Cupv,  unless  the
+       ----uuppddaattee  option is used, in which case tape segments with
+       empty checksum can be updated without special  privileges.
+
+       _p_a_t_h   specifies the CASTOR pathname.
+
+OOPPTTIIOONNSS
+       ----ccooppyynnoo
+              specifies  which  copy  of the file should be modi­
+              fied.
+
+       ----sseeggmmeennttnnoo
+              specifies which tape segment should be modified.
+
+       ----uuppddaattee
+              use the  Cns_updateseg_checksum  call  rather  than
+              Cns_replaceseg.
+
+       ----cchheecckkssuumm__nnaammee
+              Name  of the checksum to be stored in the database.
+
+       ----cchheecckkssuumm
+              Value of the checksum to be stored in the database.
+
+       ----ccllrr  Resets  the checksum to a NULL name, and a 0 value.
+              Cannot be used in conjunction with  --checksum_name
+              and --checksum nor --update. Requires the ADMIN UPV
+              privileges.
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCnnss__rreeppllaacceesseegg((33)), CCnnss__uuppddaatteesseegg__cchheecckkssuumm((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/03/09 11:35:54       NSSETCHECKSUM(1)

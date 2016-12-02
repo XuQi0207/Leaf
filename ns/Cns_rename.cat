@@ -1,0 +1,100 @@
+CNS_RENAME(3)         Cns Library Functions         CNS_RENAME(3)
+
+
+
+NNAAMMEE
+       Cns_rename - rename a CASTOR file or directory in the name
+       server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       iinntt CCnnss__rreennaammee ((ccoonnsstt cchhaarr **_o_l_d_p_a_t_h,, ccoonnsstt cchhaarr **_n_e_w_p_a_t_h))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__rreennaammee renames a CASTOR file or directory in the  name
+       server.
+
+       _o_l_d_p_a_t_h  and  _n_e_w_p_a_t_h  must be of the same type, i.e. both
+       regular files or both directories.
+
+       If _n_e_w_p_a_t_h exists already, it will be removed  before  the
+       rename  takes place. If _n_e_w_p_a_t_h is a directory, it must be
+       empty.
+
+       When renaming a directory, _n_e_w_p_a_t_h must not be  a  descen­
+       dant  of  _o_l_d_p_a_t_h,  i.e.   _n_e_w_p_a_t_h must not contain a path
+       prefix that names _o_l_d_p_a_t_h.
+
+       Write permission is required on both parents.  If  _o_l_d_p_a_t_h
+       is  a directory, write permission is required on it and if
+       _n_e_w_p_a_t_h is an existing directory, write permission is also
+       required on it.
+
+       If  any  of  the  parents  has the sticky bit S_ISVTX set,
+       either
+
+              the effective user ID of the requestor  must  match
+              the owner ID of the file or
+
+              the  effective  user ID of the requestor must match
+              the owner ID of the directory or
+
+              the file must be writable by the requestor or
+
+              the requestor must have ADMIN privilege in the Cupv
+              database.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EENNOOEENNTT       A  component of _o_l_d_p_a_t_h prefix does not exist
+                    or _o_l_d_p_a_t_h or _n_e_w_p_a_t_h is a null pathname.
+
+       EEAACCCCEESS       Search permission is denied on a component of
+                    the  path prefixes or write permission on the
+                    parent directories is denied or _o_l_d_p_a_t_h is  a
+                    directory  and  write permission is denied on
+                    _o_l_d_p_a_t_h or _n_e_w_p_a_t_h.
+
+       EEFFAAUULLTT       _o_l_d_p_a_t_h or _n_e_w_p_a_t_h is a NULL pointer.
+
+       EEEEXXIISSTT       _n_e_w_p_a_t_h is an existing directory and  is  not
+                    empty.
+
+       EENNOOTTDDIIRR      A  component  of  the  path prefixes is not a
+                    directory or _o_l_d_p_a_t_h is a directory and  _n_e_w_­
+                    _p_a_t_h is an existing regular file.
+
+       EEIISSDDIIRR       _n_e_w_p_a_t_h  is  a  directory  while _o_l_d_p_a_t_h is a
+                    regular file.
+
+       EEIINNVVAALL       _n_e_w_p_a_t_h is a descendant of _o_l_d_p_a_t_h.
+
+       EENNAAMMEETTOOOOLLOONNGG The length  of  _o_l_d_p_a_t_h  or  _n_e_w_p_a_t_h  exceeds
+                    CCAA__MMAAXXPPAATTHHLLEENN  or the length of a path compo­
+                    nent exceeds CCAA__MMAAXXNNAAMMEELLEENN.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)),        CCnnss__cchhddiirr((33)),       CCnnss__cchhmmoodd((33)),
+       CCnnss__uunnlliinnkk((33)), CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/16 06:25:40          CNS_RENAME(3)

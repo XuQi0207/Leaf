@@ -1,0 +1,57 @@
+CNS_READDIRXC(3)      Cns Library Functions      CNS_READDIRXC(3)
+
+
+
+NNAAMMEE
+       Cns_readdirxc   -   read   CASTOR   directory   opened  by
+       CCnnss__ooppeennddiirr in the name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       ssttrruucctt CCnnss__ddiirreennssttaattcc **CCnnss__rreeaaddddiirrxxcc ((CCnnss__DDIIRR **_d_i_r_p))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__rreeaaddddiirrxxcc  reads  the  CASTOR  directory   opened   by
+       CCnnss__ooppeennddiirr  in  the  name server.  This routine returns a
+       pointer to a structure containing  the  current  directory
+       entry including the ssttaatt information and the comment asso­
+       ciated.  CCnnss__rreeaaddddiirrxxcc caches a variable  number  of  such
+       entries,  depending  on the filename size, to minimize the
+       number of requests to the name server.
+
+       _d_i_r_p   specifies   the   pointer   value    returned    by
+              CCnnss__ooppeennddiirr.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine  returns a pointer to a structure containing
+       the current directory entry if the operation was  success­
+       ful  or NULL if the end of the directory was reached or if
+       the operation failed. In the latter case,  sseerrrrnnoo  is  set
+       appropriately.
+
+EERRRROORRSS
+       EEBBAADDFF        File  descriptor in DIR structure is invalid.
+
+       EEFFAAUULLTT       _d_i_r_p is a NULL pointer.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCnnss__cclloosseeddiirr((33)),     CCnnss__ooppeennddiirr((33)),     CCnnss__rreewwiinnddddiirr((33)),
+       CCnnss__sseettccoommmmeenntt(3),, ssttaatt((22))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52       CNS_READDIRXC(3)

@@ -1,0 +1,30 @@
+CNS_UMASK(3)          Cns Library Functions          CNS_UMASK(3)
+
+
+
+NNAAMMEE
+       Cns_umask  - set and get CASTOR file creation mask used by
+       the name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       mmooddee__tt CCnnss__uummaasskk ((mmooddee__tt _c_m_a_s_k))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__uummaasskk sets the CASTOR file creation mask used  by  the
+       name server to _c_m_a_s_k and returns the previous value of the
+       mask.  The current mask is stored in a  thread-safe  vari­
+       able  in  the  client.  Only the access permission bits of
+       _c_m_a_s_k are used.
+
+SSEEEE AALLSSOO
+       CCnnss__cchhmmoodd((33)), CCnnss__ccrreeaatt((33)), CCnnss__mmkkddiirr((33)), CCnnss__ssttaatt((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52           CNS_UMASK(3)

@@ -1,0 +1,35 @@
+.lf 1 nsrename.man
+.\" @(#)nsrename.man,v 1.3 2001/09/26 09:13:52 CERN IT-PDP/DM Jean-Philippe Baud
+.\" Copyright (C) 1999-2000 by CERN/IT/PDP/DM
+.\" All rights reserved
+.\"
+.TH NSRENAME 1 "2001/09/26 09:13:52" CASTOR "Cns User Commands"
+.SH NAME
+nsrename \- rename a CASTOR file or directory in the name server
+.SH SYNOPSIS
+.B nsrename
+.I oldpath
+.I newpath
+.SH DESCRIPTION
+.B nsrename
+renames a CASTOR file or directory in the name server.
+.LP
+This requires write permission in the parent directories.
+.LP
+If
+.I oldpath
+or
+.I newpath
+does not start with
+.BR / ,
+it is prefixed by the content of the
+.B CASTOR_HOME
+environment variable.
+.SH EXIT STATUS
+This program returns 0 if the operation was successful or >0 if the operation
+failed.
+.SH SEE ALSO
+.BR Castor_limits(4) ,
+.BR Cns_rename(3)
+.SH AUTHOR
+\fBCASTOR\fP Team <castor.support@cern.ch>

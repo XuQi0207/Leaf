@@ -1,0 +1,79 @@
+CNS_DELETE(3)         Cns Library Functions         CNS_DELETE(3)
+
+
+
+NNAAMMEE
+       Cns_delete  -  logically delete a CASTOR file entry in the
+       name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       iinntt CCnnss__ddeelleettee ((ccoonnsstt cchhaarr **_p_a_t_h))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__ddeelleettee logically deletes a CASTOR file  entry  in  the
+       name   server.    The  file  can  be  recovered  by  using
+       CCnnss__uunnddeelleettee as long as a the reclaim utility has not been
+       run on the corresponding tape volume.
+
+       _p_a_t_h   specifies the logical pathname relative to the cur­
+              rent CASTOR directory or the full CASTOR  pathname.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EEPPEERRMM        _p_a_t_h is a directory.
+
+       EENNOOEENNTT       The  named  file  does not exist or is a null
+                    pathname.
+
+       EEAACCCCEESS       Search permission is denied on a component of
+                    the _p_a_t_h prefix or write permission is denied
+                    on the parent directory or the parent has the
+                    sticky bit S_ISVTX set and
+
+                      the effective user ID of the requestor does
+                      not match the owner ID of the file and
+
+                      the effective user ID of the requestor does
+                      not match the owner ID of the directory and
+
+                      the file is not writable by  the  requestor
+                      and
+
+                      the requestor does not have ADMIN privilege
+                      in the Cupv database.
+
+       EEFFAAUULLTT       _p_a_t_h is a NULL pointer.
+
+       EENNOOTTDDIIRR      A component of _p_a_t_h prefix is  not  a  direc­
+                    tory.
+
+       EENNAAMMEETTOOOOLLOONNGG The  length  of _p_a_t_h exceeds CCAA__MMAAXXPPAATTHHLLEENN or
+                    the  length  of  a  _p_a_t_h  component   exceeds
+                    CCAA__MMAAXXNNAAMMEELLEENN.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name  server is not running or is being shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)),      CCnnss__cchhddiirr((33)),      CCnnss__uunnddeelleettee((33)),
+       CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/16 06:25:40          CNS_DELETE(3)

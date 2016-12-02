@@ -1,0 +1,57 @@
+NSRM(1)                 Cns User Commands                 NSRM(1)
+
+
+
+NNAAMMEE
+       nsrm  -  remove  CASTOR  files  or directories in the name
+       server
+
+SSYYNNOOPPSSIISS
+       nnssrrmm [--ff] [--ii] _f_i_l_e_n_a_m_e...
+
+       nnssrrmm [--ff] [--ii] --rr _d_i_r_n_a_m_e...
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssrrmm removes CASTOR  files  or  directories  in  the  name
+       server.   For directories either --rr or --RR must be present.
+       For regular files, it calls CCnnss__uunnlliinnkk while for  directo­
+       ries, it calls CCnnss__rrmmddiirr.
+
+       This requires write permission in the parent directory and
+       the file itself.  If  write  permission  on  an  entry  is
+       denied, the standard input is a terminal and the --ff option
+       is not  given,  the  prompt  "override  write  protection"
+       appears  and  if  the  response is not yy, the entry is not
+       deleted.  Entries directly under a protected directory are
+       never deleted.
+
+       _p_a_t_h   specifies  the  CASTOR  pathname.  If _p_a_t_h does not
+              start with //, it is prefixed by the content of  the
+              CCAASSTTOORR__HHOOMMEE environment variable.
+
+OOPPTTIIOONNSS
+       The following options are supported:
+
+       --ff     Do  not give an error message if the file/directory
+              does not exist.
+
+       --ii     Request acknowledge before removing each individual
+              entry.
+
+       --RR     Recursive mode (equivalent to --rr).
+
+       --rr     Recursive mode.
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__rrmmddiirr((33)), CCnnss__uunnlliinnkk((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/18 11:57:00                NSRM(1)

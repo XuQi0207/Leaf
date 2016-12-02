@@ -1,0 +1,62 @@
+CNS_GETCWD(3)         Cns Library Functions         CNS_GETCWD(3)
+
+
+
+NNAAMMEE
+       Cns_getcwd - get CASTOR current directory used by the name
+       server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       cchhaarr **CCnnss__ggeettccwwdd ((cchhaarr **_b_u_f,, iinntt _s_i_z_e))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__ggeettccwwdd gets the CASTOR current directory used  by  the
+       name  server.  This current working directory is stored in
+       a thread-safe variable in the client.
+
+       If _b_u_f is not NULL, the current  directory  name  will  be
+       stored there.
+       If  _b_u_f  is  NULL,  CCnnss__ggeettccwwdd  allocates a buffer of _s_i_z_e
+       bytes using mmaalllloocc.
+
+       _s_i_z_e must be at least the length of the directory name  to
+       be returned plus one byte.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine  returns _b_u_f if the operation was successful
+       or NULL if the operation failed.  In the latter case, sseerr­­
+       rrnnoo is set appropriately.
+
+EERRRROORRSS
+       EENNOOEENNTT       The current directory has not been set yet or
+                    does not exist anymore.
+
+       EENNOOMMEEMM       _b_u_f is a NULL pointer and memory could not be
+                    allocated.
+
+       EEIINNVVAALL       _s_i_z_e is less than or equal to zero.
+
+       EERRAANNGGEE       _s_i_z_e  is greater than 0 and less than size of
+                    current directory name plus 1.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCnnss__cchhddiirr((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:51          CNS_GETCWD(3)

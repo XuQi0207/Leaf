@@ -1,0 +1,92 @@
+NSFIND(1)               Cns User Commands               NSFIND(1)
+
+
+
+NNAAMMEE
+       nsfind - search for files in CASTOR name server
+
+SSYYNNOOPPSSIISS
+       nnssffiinndd  _p_a_t_h_-_l_i_s_t  [  --aattiimmee  _n_b_d_a_y_s ] [ --ccttiimmee _n_b_d_a_y_s ] [
+       --iinnuumm _f_i_l_e_i_d ] [ --llss ] [ --mmttiimmee _n_b_d_a_y_s ] [ --nnaammee _p_a_t_t_e_r_n ]
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssffiinndd searches for files in CASTOR name server.
+
+       _p_a_t_h_-_l_i_s_t
+              specifies  the  list  of CASTOR pathnames.  If _p_a_t_h
+              does not start with //, it is prefixed by  the  con­
+              tent of the CCAASSTTOORR__HHOOMMEE environment variable.
+
+OOPPTTIIOONNSS
+       --aattiimmee _n_b_d_a_y_s
+              if _n_b_d_a_y_s is is just a number, the file is selected
+              if it was accessed exactly _n_b_d_a_y_s ago. If the argu­
+              ment is in the form +n, this means more than n days
+              ago and if the argument is in  the  form  -n,  this
+              means less than n days ago.
+
+       --ccttiimmee _n_b_d_a_y_s
+              the  file  is selected if its status changed _n_b_d_a_y_s
+              ago. See -atime above.
+
+       --iinnuumm _f_i_l_e_i_d
+              the file is selected if its fileid matches  _f_i_l_e_i_d.
+
+       --llss    list  current  file  in  "nsls  -dil"  format, i.e.
+              gives the file id, the file  mode,  the  number  of
+              entries  in  the directory, the owner in alphabetic
+              form if the user ID is defined in the  ppaasssswwdd  file
+              else  as  a decimal number, the group in alphabetic
+              form if the group ID is defined in the  ggrroouupp  file
+              else  as  a decimal number, the file size, the last
+              modification date and the file name.
+
+              The mode is printed as 10 characters, the first one
+              is  dd  for  a  directory, DD for a logically deleted
+              file, mm for a migrated file and  --  for  a  regular
+              file.   The  next  9 characters are three triplets:
+              the  first  triplet  gives  read,  write  and  exe­
+              cute/search  permission  for  the owner, the second
+              triplet for the group and the last one for the oth­
+              ers.
+
+                      rr      the file is readable
+
+                      ww      the file is writable
+
+                      xx      the file is executable or the direc­
+                             tory is searchable
+
+                      --      permission is not granted
+
+                      ss      set-user-ID or set-group-ID  bit  is
+                             on
+
+                      tt      sticky bit is on
+
+       --mmttiimmee _n_b_d_a_y_s
+              the file is selected if it has been modified _n_b_d_a_y_s
+              ago. See -atime above.
+
+       --nnaammee _p_a_t_t_e_r_n
+              select the file if the file  name  matches  regular
+              expression _p_a_t_t_e_r_n.
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+FFIILLEESS
+       //eettcc//ggrroouupp
+
+       //eettcc//ppaasssswwdd
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__cchhmmoodd((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/29 12:59:55              NSFIND(1)

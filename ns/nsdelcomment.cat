@@ -1,0 +1,36 @@
+NSDELCOMMENT(1)         Cns User Commands         NSDELCOMMENT(1)
+
+
+
+NNAAMMEE
+       nsdelcomment  -  delete  the  comment  associated  with  a
+       file/directory
+
+SSYYNNOOPPSSIISS
+       nnssddeellccoommmmeenntt _p_a_t_h
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssddeellccoommmmeenntt  deletes  the  comment  associated   with   a
+       file/directory in the CASTOR name server.
+
+       The  effective user ID of the process must match the owner
+       of the file or the caller must have ADMIN privilege in the
+       Cupv database.
+
+       _p_a_t_h   specifies  the  CASTOR  pathname.  If _p_a_t_h does not
+              start with //, it is prefixed by the content of  the
+              CCAASSTTOORR__HHOOMMEE environment variable.
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__ddeellccoommmmeenntt((33)), CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/16 06:25:40        NSDELCOMMENT(1)

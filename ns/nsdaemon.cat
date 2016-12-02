@@ -1,0 +1,107 @@
+NSDAEMON(1)         Cns Administrator Commands        NSDAEMON(1)
+
+
+
+NNAAMMEE
+       nsdaemon - start the name server
+
+SSYYNNOOPPSSIISS
+       nnssddaaeemmoonn
+
+DDEESSCCRRIIPPTTIIOONN
+       The nnssddaaeemmoonn command starts the name server.  This command
+       is   usually   executed    at    system    startup    time
+       (//eettcc//rrcc..llooccaall).   This will read the name server configu­
+       ration file, create the "/" entry in the  database  if  it
+       does  not exist yet, create a pool of threads and look for
+       requests.  Each of them is processed  in  a  thread  which
+       opens  a  connection  to the database server if necessary.
+       When a request has been completed, the thread becomes idle
+       until  it is allocated to another request.  The connection
+       to the database server is kept open  between  2  requests.
+       If  the  name  server is being shutdown or not active, the
+       requests are automatically retried by the client API.
+
+       All error messages and statistical information are kept in
+       a log.
+
+       The  name  server  listen  port  number  can be defined on
+       client hosts and on the name server itself  in  either  of
+       the following ways:
+
+              setting an environment variable CNS_PORT
+
+                     setenv CNS_PORT 5010
+
+              an entry in //eettcc//sshhiifftt..ccoonnff like:
+
+                     CNS  PORT 5010
+
+              an entry in //eettcc//sseerrvviicceess like:
+
+                     cns                                 5010/tcp
+                             # CASTOR name server
+
+       If none of these methods is used, the default port  number
+       is  taken  from  the  definition  of  CNS_PORT in Cns_con­
+       stants.h.
+
+       The name server host name can be defined on  client  hosts
+       in either of the following ways:
+
+              setting an environment variable CNS_HOST, for exam­
+              ple:
+
+                     setenv CNS_HOST castor5
+
+              an entry in //eettcc//sshhiifftt..ccoonnff for example:
+
+                     CNS  HOST castor5
+
+       If none of these methods is  used,  the  default  host  is
+       taken from the definition of NsHost in site.def.
+
+       The  name  server database keeps the metadata information:
+       filename, file size, access time, permissions  and  migra­
+       tion status.
+
+       The  name  server  configuration  file  contains  password
+       information for the database and must be readable/writable
+       only by root.  It contains a single line in the format:
+
+              username/password@server
+       where  'username'  and  'password'  are the credentials to
+       login to the database instance identified by 'server'.
+
+       In the log each entry has a timestamp.  All entries corre­
+       sponding  to  one  request  have the same request id.  For
+       each user command there is one message NS092 giving infor­
+       mation  about  the  requestor (hostname, uid, gid) and one
+       message NS098 giving the command itself.   The  completion
+       code of the command is also logged.
+
+FFIILLEESS
+       //eettcc//NNSSCCOONNFFIIGG  configuration file
+
+       //uussrr//ssppooooll//nnss//lloogg
+
+EEXXAAMMPPLLEESS
+       Here is a small log:
+              09/13 14:36:35  6089 Cns_serv: started
+              09/13 14:36:36  6089 Cns_serv: creating /
+              09/13 14:37:02  6089 Cns_srv_mkdir: NS092 - mkdir request by 0,0 from castor5.cern.ch
+              09/13 14:37:02  6089 Cns_srv_mkdir: NS098 - mkdir /castor 777 22
+              09/13 14:37:02  6089 Cns_srv_mkdir: returns 0
+              09/13 14:37:18  6089 Cns_srv_stat: NS092 - stat request by 0,0 from castor5.cern.ch
+              09/13 14:37:18  6089 Cns_srv_stat: NS098 - stat /castor
+              09/13 14:37:18  6089 Cns_srv_stat: returns 0
+
+SSEEEE AALLSSOO
+       nnsssshhuuttddoowwnn((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/10/05 06:12:40            NSDAEMON(1)

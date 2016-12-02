@@ -1,0 +1,170 @@
+CASTOR_LIMITS(4)           File Formats          CASTOR_LIMITS(4)
+
+
+
+NNAAMMEE
+       CCaassttoorr__lliimmiittss - CASTOR internal limits
+
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<_C_a_s_t_o_r___l_i_m_i_t_s_._h>>
+
+
+DDEESSCCRRIIPPTTIIOONN
+       The  CCaassttoorr__lliimmiittss..hh  header  file contains all the common
+       limits that all CASTOR subpackages have to respect.
+       These are:
+
+       CCAA__MMAAXXCCKKSSUUMMNNAAMMEELLEENN
+              maximum lenght for a checksum algorithm name
+              Default value: 15
+
+       CCAA__MMAAXXCCLLAASSNNAAMMEELLEENN
+              maximum length for a fileclass name
+              Default value: 15
+
+       CCAA__MMAAXXCCOOMMMMEENNTTLLEENN
+              maximum length for user comments in metadata
+              Default value: 255
+
+       CCAA__MMAAXXDDEENNFFIIEELLDDSS
+              maximum number of density values in devinfo
+              Default value: 8
+
+       CCAA__MMAAXXDDEENNLLEENN
+              maximum length for a alphanumeric density
+              Default value: 8
+
+       CCAA__MMAAXXDDGGNNLLEENN
+              maximum length for a device group name
+              Default value: 6
+
+       CCAA__MMAAXXDDVVNNLLEENN
+              maximum length for a device name
+              Default value: 63
+
+       CCAA__MMAAXXDDVVTTLLEENN
+              maximum length for a device type
+              Default value: 8
+
+       CCAA__MMAAXXFFIIDDLLEENN
+              maximum length for a fid (DSN)
+              Default value: 17
+
+       CCAA__MMAAXXFFSSEEQQLLEENN
+              maximum length for a fseq string
+              Default value: 14
+
+       CCAA__MMAAXXGGIIDD
+              maximum value for gid
+              Default value: 0x7FFFFFFF
+
+       CCAA__MMAAXXGGRRPPNNAAMMEELLEENN
+              maximum length for a group name
+              Default value: 2
+
+       CCAA__MMAAXXHHOOSSTTNNAAMMEELLEENN
+              maximum length for a hostname
+              Default value: 63
+
+       CCAA__MMAAXXLLBBLLTTYYPPLLEENN
+              maximum length for a label type
+              Default value: 3
+
+       CCAA__MMAAXXLLIINNEELLEENN
+              maximum length for a line in a log
+              Default value: 1023
+
+       CCAA__MMAAXXMMAANNUUFFLLEENN
+              maximum length for a cartridge manufacturer
+              Default value: 12
+
+       CCAA__MMAAXXMMLLLLEENN
+              maximum length for a cartridge media_letter
+              Default value: 1
+
+       CCAA__MMAAXXMMOODDEELLLLEENN
+              maximum length for a cartridge model
+              Default value: 6
+
+       CCAA__MMAAXXNNAAMMEELLEENN
+              maximum length for a pathname component
+              Default value: 231
+
+       CCAA__MMAAXXNNBBDDRRIIVVEESS
+              maximum number of tape drives per server
+              Default value: 32
+
+       CCAA__MMAAXXPPAATTHHLLEENN
+              maximum length for a pathname
+              Default value: 1023
+
+       CCAA__MMAAXXPPOOOOLLNNAAMMEELLEENN
+              maximum length for a pool name
+              Default value: 15
+
+       CCAA__MMAAXXRRBBTTNNAAMMEELLEENN
+              maximum length for a robot name
+              Default value: 17
+
+       CCAA__MMAAXXRREECCFFMMLLEENN
+              maximum length for a record format
+              Default value: 3
+
+       CCAA__MMAAXXRREEGGEEXXPPLLEENN
+              maximum length for a regular expression
+              Default value: 63
+
+       CCAA__MMAAXXSSHHOORRTTHHOOSSTTLLEENN
+              maximum length for a hostname without domain
+              Default value: 10
+
+       CCAA__MMAAXXSSNNLLEENN
+              maximum length for a cartridge serial nb
+              Default value: 24
+
+       CCAA__MMAAXXSSTTGGRRIIDDLLEENN
+              maximum length for a stager full request id
+              (must be >= nb digits in
+              CCAA__MMAAXXSSTTGGRREEQQIIDD + CCAA__MMAAXXHHOOSSTTNNAAMMEELLEENN + 8)
+              Default value: 77
+
+       CCAA__MMAAXXSSTTGGRREEQQIIDD
+              maximum value for a stager request id
+              Default value: 999999
+
+       CCAA__MMAAXXUUIIDD
+              maximum value for uid
+              Default value: 0x7FFFFFFF
+
+       CCAA__MMAAXXTTAAGGLLEENN
+              maximum length for a volume tag
+              Default value: 255
+
+       CCAA__MMAAXXTTAAPPEELLIIBBLLEENN
+              maximum length for a tape library name
+              Default value: 8
+
+       CCAA__MMAAXXUUNNMMLLEENN
+              maximum length for a drive name
+              Default value: 8
+
+       CCAA__MMAAXXUUSSRRNNAAMMEELLEENN
+              maximum length for a login name
+              Default value: 14
+
+       CCAA__MMAAXXVVIIDDLLEENN
+              maximum length for a VID
+              Default value: 6
+
+       CCAA__MMAAXXVVSSNNLLEENN
+              maximum length for a VSN
+              Default value: 6
+
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/02/12 15:40:32       CASTOR_LIMITS(4)

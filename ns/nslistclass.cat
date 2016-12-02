@@ -1,0 +1,68 @@
+NSLISTCLASS(1)          Cns User Commands          NSLISTCLASS(1)
+
+
+
+NNAAMMEE
+       nslistclass  -  query the CASTOR Name Server about a given
+       class or list all existing classes
+
+SSYYNNOOPPSSIISS
+       nnsslliissttccllaassss  ----iidd   _c_l_a_s_s_i_d   ----nnaammee   _c_l_a_s_s___n_a_m_e   [   --hh
+       _n_a_m_e___s_e_r_v_e_r ] [ ----nnoohhddrr ]
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsslliissttccllaassss  queries  the CASTOR Name Server about a given
+       class or lists all existing classes: The fileclass can  be
+       identified by _c_l_a_s_s_i_d or by _c_l_a_s_s___n_a_m_e.  If both are spec­
+       ified, they must point at the same class.
+
+OOPPTTIIOONNSS
+       --hh _n_a_m_e___s_e_r_v_e_r
+
+       ----iidd _c_l_a_s_s_i_d
+              The class number of the class to be displayed.
+
+       ----nnaammee _c_l_a_s_s___n_a_m_e
+              The name of the class to be displayed.
+
+EEXXAAMMPPLLEESS
+       nslistclass --id 2
+
+       CLASS_ID        2
+       CLASS_NAME      user
+       CLASS_UID       -
+       CLASS_GID       -
+       FLAGS           0x0
+       MAXDRIVES       2
+       MIN FILESIZE    0
+       MAX FILESIZE    0
+       MAX SEGSIZE     0
+       MIGR INTERVAL   1800
+       MIN TIME        0
+       NBCOPIES        1
+       RETENP_ON_DISK  AS_LONG_AS_POSSIBLE
+       TAPE POOLS      default
+
+
+       nslistclass --id 2 -nohdr
+
+       2 user -        -      0x0 2 0 0 0 1800 1 AS_LONG_AS_POSSIBLE default
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+FFIILLEESS
+       //eettcc//ggrroouupp
+
+       //eettcc//ppaasssswwdd
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__lliissttccllaassss((33)), CCnnss__qquueerryyccllaassss((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52         NSLISTCLASS(1)

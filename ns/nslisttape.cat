@@ -1,0 +1,53 @@
+NSLISTTAPE(1)           Cns User Commands           NSLISTTAPE(1)
+
+
+
+NNAAMMEE
+       nslisttape - list the file segments residing on a volume
+
+SSYYNNOOPPSSIISS
+       nnsslliissttttaappee  [ --hh _n_a_m_e___s_e_r_v_e_r ] --VV _v_i_d [ ----ddiissppllaayy__ssiiddee ] [
+       ----ddss ] [ ----cchheecckkssuumm ]
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsslliissttttaappee lists the file segments residing on a volume.
+
+       _v_i_d    specifies the visual identifier for the volume.
+
+       ----ddiissppllaayy__ssiiddee or ----ddss
+              print the vid followed by a slash followed  by  the
+              media  side  number.   This  option  is  useful for
+              multi-sided media like DVD.
+
+       ----cchheecckkssuumm
+              Display the tape segments checksum.
+
+       The list gives the file segment status, the  copy  number,
+       the  file  segment number, the tape visual identifier, the
+       file sequence number on tape,  the  blockid,  the  segment
+       size,  the compression factor and the file name.  The seg­
+       ment status can be either -- for an active segment or DD for
+       a logically deleted segment.
+
+EEXXAAMMPPLLEESS
+       nslisttape -V RT0003
+       - 1   1 RT0003     1 00000000         6 0 /castor/cern.ch/user/j/jdurand/TOTO6
+       - 1   1 RT0003     2 00000000         7 0 /castor/cern.ch/user/j/jdurand/TOTO10
+       - 1   1 RT0003     3 00000000         7 0 /castor/cern.ch/user/j/jdurand/TOTO18
+       - 1   1 RT0003     4 00000000         7 0 /castor/cern.ch/user/j/jdurand/TOTO29
+       - 1   1 RT0003     5 00000000         7 0 /castor/cern.ch/user/j/jdurand/TOTO16
+       - 1   1 RT0003     6 00000000         7 0 /castor/cern.ch/user/j/jdurand/TOTO25
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__lliissttttaappee((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/03/05 10:27:27          NSLISTTAPE(1)

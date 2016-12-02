@@ -1,0 +1,113 @@
+NSLS(1)                 Cns User Commands                 NSLS(1)
+
+
+
+NNAAMMEE
+       nsls - list CASTOR name server directory/file entries
+
+SSYYNNOOPPSSIISS
+       nnssllss  [--ccddiillRRTTuu] [----ccllaassss] [----ccoommmmeenntt] [----ddeelleetteedd] [----ddiiss­­
+       ppllaayy__ssiiddee] [----ddss] [----cchheecckkssuumm] _p_a_t_h...
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssllss lists CASTOR name server directory/file entries.   If
+       _p_a_t_h  is  a directory, nnssllss list the entries in the direc­
+       tory; they are sorted alphabetically.
+
+       _p_a_t_h   specifies the CASTOR pathname.  If  _p_a_t_h  does  not
+              start  with //, it is prefixed by the content of the
+              CCAASSTTOORR__HHOOMMEE environment variable.
+
+OOPPTTIIOONNSS
+       --cc     use time of last metadata modification  instead  of
+              last file modification.
+
+       --dd     if  _p_a_t_h  is  a directory, list the directory entry
+              itself, not the files in that directory.
+
+       --ii     print the file uniqueid in front of each entry.
+
+       --ll     long listing (see below).
+
+       --RR     list the contents of directories recursively.
+
+       --TT     list file segments migrated to tape.
+
+       --uu     use last access time instead of last  modification.
+
+       ----ccllaassss
+              print the file class in front of each entry.
+
+       ----ccoommmmeenntt
+              print  the  comment associated with the entry after
+              the pathname.
+
+       ----ddeelleetteedd
+              print also the logically deleted files.
+
+       ----ddiissppllaayy__ssiiddee or ----ddss
+              print the vid followed by a slash followed  by  the
+              media side number.  This option is valid only if -T
+              is specified and is useful  for  multi-sided  media
+              like DVD.
+
+       ----cchheecckkssuumm
+              displays the checksum of the file segments migrated
+              to tape. This option should only be used  with  the
+              -T  option  as it displays the tape segments check­
+              sum.
+
+       The long list gives the file mode, the number  of  entries
+       in the directory, the owner in alphabetic form if the user
+       ID is defined in the ppaasssswwdd file else as a decimal number,
+       the group in alphabetic form if the group ID is defined in
+       the ggrroouupp file else as a decimal number,  the  file  size,
+       the last modification date and the file name.
+
+       The  mode  is printed as 10 characters, the first one is dd
+       for a directory, DD for a logically deleted file, mm  for  a
+       migrated  file and -- for a regular file.  The next 9 char­
+       acters are three triplets: the first triplet  gives  read,
+       write  and  execute/search  permission  for the owner, the
+       second triplet for the group and the last one for the oth­
+       ers.
+
+              rr      the file is readable
+
+              ww      the file is writable
+
+              xx      the  file  is executable or the directory is
+                     searchable
+
+              --      permission is not granted
+
+              ss      set-user-ID or set-group-ID bit is on
+
+              tt      sticky bit is on
+
+       The file segments list gives the file segment status,  the
+       copy  number,  the  file  segment  number, the tape visual
+       identifier, the file sequence number on tape, the blockid,
+       the  segment  size,  the  compression  factor and the file
+       name.  The segment status can be either --  for  an  active
+       segment or DD for a logically deleted segment.
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+FFIILLEESS
+       //eettcc//ggrroouupp
+
+       //eettcc//ppaasssswwdd
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)),     CCnnss__cchhmmoodd((33)),     CCnnss__ggeettccoommmmeenntt((33)),
+       CCnnss__ggeettsseeggaattttrrss((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/03/04 09:41:35                NSLS(1)

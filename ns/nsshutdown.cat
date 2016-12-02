@@ -1,0 +1,38 @@
+NSSHUTDOWN(1)       Cns Administrator Commands      NSSHUTDOWN(1)
+
+
+
+NNAAMMEE
+       nsshutdown - shutdown the name server
+
+SSYYNNOOPPSSIISS
+       nnsssshhuuttddoowwnn [--ff] --hh _n_a_m_e___s_e_r_v_e_r
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsssshhuuttddoowwnn  shuts the name server down.  It waits for out­
+       standing  requests  to  complete.  New  requests  will  be
+       rejected  with  sseerrrrnnoo set to EENNSSNNAACCTT.  Connections to the
+       database server are closed one by one when  they  are  not
+       used anymore and when all connections are closed, the name
+       server exits.
+
+       This  command  requires  ADMIN  privilege  in   the   Cupv
+       database.
+
+OOPPTTIIOONNSS
+       --ff     force shutdown, i.e. long operations like directory
+              listing can be aborted.
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/08/23 12:48:51          NSSHUTDOWN(1)

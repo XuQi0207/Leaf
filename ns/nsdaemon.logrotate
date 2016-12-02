@@ -1,0 +1,19 @@
+#
+# nsdaemon.logrotate,v 1.1 2003/10/31 10:03:23 jdurand Exp
+#
+# @(#)nsdaemon.logrotate,v 1.1 2003/10/31 10:03:23 CERN/IT/ADC/CA Jean-Damien Durand
+#
+/var/log/nsdaemon {
+    compress
+    daily
+    delaycompress
+    missingok
+    rotate 15
+}
+/usr/spool/ns/log {
+    compress
+    daily
+    delaycompress
+    missingok
+    rotate 15
+}

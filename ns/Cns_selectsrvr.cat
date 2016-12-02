@@ -1,0 +1,85 @@
+CNS_SELECTSRVR(3)     Cns Library Functions     CNS_SELECTSRVR(3)
+
+
+
+NNAAMMEE
+       Cns_selectsrvr - select the CASTOR Name Server
+
+SSYYNNOOPPSSIISS
+       iinntt   CCnnss__sseelleeccttssrrvvrr  ((cchhaarr  **_p_a_t_h,,  cchhaarr  **_c_u_r_r_e_n_t___d_i_r_e_c_­
+       _t_o_r_y___s_e_r_v_e_r,, cchhaarr **_s_e_r_v_e_r,, cchhaarr ****_a_c_t_u_a_l___p_a_t_h));;
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__sseelleeccttssrrvvrr selects the CASTOR Name Server.
+
+       The name server host name is  selected  according  to  the
+       following rules:
+
+              if  _p_a_t_h  is in the form _s_e_r_v_e_r_:_p_a_t_h_n_a_m_e, _s_e_r_v_e_r is
+              used else
+
+              if the environment variable CNS_HOST  is  set,  its
+              value is used as server name else
+
+              if  an  entry for CNS HOST exists in the configura­
+              tion file //eettcc//sshhiifftt..ccoonnff, the corresponding  value
+              is used else
+
+              if _p_a_t_h is an absolute path and contains at least 3
+              components, the second component of the pathname is
+              the domain name and the third component is prefixed
+              by the value of CCnnssHHoossttPPffxx (defined in ssiittee..ddeeff) to
+              give the hostname or its alias else
+
+              the  Name  Server  running  on the local machine is
+              used.
+
+EEXXAAMMPPLLEESS
+       1) _p_a_t_h is castor1:/castor/cern.ch/user/b/baud/test
+       _s_e_r_v_e_r will be  castor1  and  _a_c_t_u_a_l___p_a_t_h  _w_i_l_l  _b_e  /cas­
+       tor/cern.ch/user/b/baud/test
+
+       2) The environment variable has been set using
+              setenv CNS_HOST castor5
+       and _p_a_t_h is /castor/cern.ch/user/b/baud/test
+       _s_e_r_v_e_r  will  be  castor5  and  _a_c_t_u_a_l___p_a_t_h  _w_i_l_l _b_e /cas­
+       tor/cern.ch/user/b/baud/test
+
+       3) The environment varaible is not set, but  there  is  an
+       entry in //eettcc//sshhiifftt..ccoonnff like
+              CNS  HOST castor2
+       and _p_a_t_h is /castor/cern.ch/user/b/baud/test
+       _s_e_r_v_e_r  will  be  castor2  and  _a_c_t_u_a_l___p_a_t_h  _w_i_l_l _b_e /cas­
+       tor/cern.ch/user/b/baud/test
+
+       4) The environment variable is not set, there is no  entry
+       in   //eettcc//sshhiifftt..ccoonnff,,  NsHostPfx  is  defined  as  ccnnss  in
+       ssiittee..ddeeff and _p_a_t_h is /castor/cern.ch/user/b/baud/test
+       _s_e_r_v_e_r will be  cnsuser  and  _a_c_t_u_a_l___p_a_t_h  _w_i_l_l  _b_e  /cas­
+       tor/cern.ch/user/b/baud/test
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EEFFAAUULLTT       _p_a_t_h, _s_e_r_v_e_r or _a_c_t_u_a_l___p_a_t_h is NULL.
+
+       EEIINNVVAALL       the server name is too long.
+
+FFIILLEESS
+       //eettcc//sshhiifftt..ccoonnff
+                    CASTOR global configuration file
+
+       ssiittee..ddeeff     site specific CASTOR compilation options
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52      CNS_SELECTSRVR(3)

@@ -1,0 +1,47 @@
+NSCHCLASS(1)            Cns User Commands            NSCHCLASS(1)
+
+
+
+NNAAMMEE
+       nschclass - change class of a CASTOR directory in the name
+       server
+
+SSYYNNOOPPSSIISS
+       nnsscchhccllaassss [--ii] [--rr] _c_l_a_s_s _p_a_t_h...
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsscchhccllaassss sets the class of a CASTOR directory(s)  in  the
+       name server to the value in _c_l_a_s_s.  This can be either the
+       classid or the class name.
+
+       The effective user ID of the process must match the  owner
+       of  the  directory or the caller must have ADMIN privilege
+       in the Cupv database.
+
+       _p_a_t_h   specifies the CASTOR pathname.  If  _p_a_t_h  does  not
+              start  with //, it is prefixed by the content of the
+              CCAASSTTOORR__HHOOMMEE environment variable.
+
+OOPPTTIIOONNSS
+       The following options are supported:
+
+       --ii     Request acknowledge before changing each individual
+              entry.
+
+       --rr     Recursive mode.  The class is changed on the direc­
+              tories, not on the existing regular files.
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)),   CCnnss__cchhccllaassss((33)),  CCuuppvvlliisstt((11)),  nnsslliisstt­­
+       ccllaassss((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/10/16 06:25:40           NSCHCLASS(1)

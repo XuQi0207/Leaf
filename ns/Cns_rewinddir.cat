@@ -1,0 +1,30 @@
+CNS_REWINDDIR(3)      Cns Library Functions      CNS_REWINDDIR(3)
+
+
+
+NNAAMMEE
+       Cns_rewinddir  - reset position to the beginning of a CAS­
+       TOR directory opened by CCnnss__ooppeennddiirr in the name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       vvooiidd CCnnss__rreewwiinnddddiirr ((CCnnss__DDIIRR **_d_i_r_p))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__rreewwiinnddddiirr resets the position to the  beginning  of  a
+       CASTOR directory opened by CCnnss__ooppeennddiirr in the name server.
+
+       _d_i_r_p   specifies   the   pointer   value    returned    by
+              CCnnss__ooppeennddiirr.
+
+SSEEEE AALLSSOO
+       CCnnss__cclloosseeddiirr((33)), CCnnss__ooppeennddiirr((33)), CCnnss__rreeaaddddiirr((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52       CNS_REWINDDIR(3)

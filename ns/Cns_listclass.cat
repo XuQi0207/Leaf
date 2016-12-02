@@ -1,0 +1,63 @@
+CNS_LISTCLASS(3)      Cns Library Functions      CNS_LISTCLASS(3)
+
+
+
+NNAAMMEE
+       Cns_listclass - list fileclass entries in the name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       ssttrruucctt  CCnnss__ffiilleeccllaassss  **CCnnss__lliissttccllaassss  ((cchhaarr  **_s_e_r_v_e_r,, iinntt
+       _f_l_a_g_s,, CCnnss__lliisstt **_l_i_s_t_p))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__lliissttccllaassss lists fileclass entries in the name  server.
+
+       _s_e_r_v_e_r specifies the CASTOR Name Server to be contacted to
+              get the fileclass definitions.
+
+       _f_l_a_g_s  may be one of the following constant:
+
+              CCNNSS__LLIISSTT__BBEEGGIINN
+                     the first call must have this  flag  set  to
+                     allocate buffers and initialize pointers.
+
+              CCNNSS__LLIISSTT__CCOONNTTIINNUUEE
+                     all  the following calls must have this flag
+                     set.
+
+              CCNNSS__LLIISSTT__EENNDD
+                     final call to terminate the  list  and  free
+                     resources.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EENNOOMMEEMM       Memory  could not be allocated for the output
+                    buffer.
+
+       EEFFAAUULLTT       _l_i_s_t_p is a NULL pointer.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__eenntteerrccllaassss((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:51       CNS_LISTCLASS(3)

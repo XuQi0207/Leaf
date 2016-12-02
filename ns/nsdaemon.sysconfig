@@ -1,0 +1,13 @@
+#
+# nsdaemon.sysconfig,v 1.1 2003/10/31 10:03:23 jdurand Exp
+#
+# @(#)nsdaemon.sysconfig,v 1.1 2003/10/31 10:03:23 CERN/IT/ADC/CA Jean-Damien Durand
+#
+# should nsdaemon run?
+# any string but "yes" will equivalent to "NO"
+#
+RUN_NSDAEMON="yes"
+#
+# should we run with another limit on the number of file descriptors than the default?
+# any string will be passed to ulimit -n
+#ULIMIT_N=4096

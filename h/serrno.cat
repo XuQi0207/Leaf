@@ -1,0 +1,679 @@
+SERRNO(3)            Castor Library Functions           SERRNO(3)
+
+
+
+NNAAMMEE
+       sseerrrrnnoo - CASTOR internal error variable
+
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<_s_e_r_r_n_o_._h>>
+
+       eexxtteerrnn iinntt _s_e_r_r_n_o;;
+       eexxtteerrnn cchhaarr **ssssttrreerrrroorr((iinntt _s_e_r_r_n_o___v_a_l_u_e ));;
+       eexxtteerrnn vvooiidd ssppeerrrroorr((cchhaarr ** _m_e_s_s_a_g_e ));;
+
+
+DDEESSCCRRIIPPTTIIOONN
+       The  sseerrrrnnoo  variable is the CASTOR's equivalent to system
+       error  variable  eerrrrnnoo.  This  variable,  accessible  only
+       trough CASTOR API's and related functions below is guaran­
+       teed to be thread-safe.
+       The serrno variable is divided into common values and  per
+       package values, that are:
+
+              CCOOPPYYTTAAPPEE
+
+              DDBB                 - Database
+
+              MMSSGG                - Message daemon
+
+              NNSS                 - Name server
+
+              RRFFIIOO               - Remote File I/O
+
+              RRTTCCOOPPYY             - Remote Tape Copy
+
+              SSTTAAGGEE              - Stager
+
+              SSYYSSRREEQQ
+
+              TTAAPPEE               - Tape operations
+
+              VVMMGGRR               - Volume Manager
+
+              VVDDQQMM               - Volume and Drive Queue Manager
+
+              RRMMCC                -  Remote  SCSI  Media   Changer
+                                 Server
+
+              MMOONN                - Monitoring
+
+              UUPPVV                - User Privilege
+
+              DDLLFF                - Distributed Logging Facility
+
+
+CCOOMMMMOONN EERRRROORRSS
+       The  following error values might be returned by any pack­
+       age:
+
+       SSEENNOOSSHHOOSSTT          (1001) Host unknown
+
+       SSEENNOOSSSSEERRVV          (1002) Service unknown
+
+       SSEENNOOTTRRFFIILLEE         (1003) Not a remote file
+
+       SSEETTIIMMEEDDOOUUTT         (1004) Has timed out
+
+       SSEEBBAADDFFFFOORRMM         (1005) Bad fortran format specifier
+
+       SSEEBBAADDFFOOPPTT          (1006) Bad fortran option specifier
+
+       SSEEIINNCCFFOOPPTT          (1007) Incompatible fortran options
+
+       SSEENNAAMMEETTOOOOLLOONNGG      (1008) File name too long
+
+       SSEENNOOCCOONNFFIIGG         (1009) Can't open configuration file
+
+       SSEEBBAADDVVEERRSSIIOONN       (1010) Version ID mismatch
+
+       SSEEUUBBUUFF22SSMMAALLLL       (1011) User buffer too small
+
+       SSEEMMSSGGIINNVVRRNNOO        (1012) Invalid reply number
+
+       SSEEUUMMSSGG22LLOONNGG        (1013) User message too long
+
+       SSEEEENNTTRRYYNNFFNNDD        (1014) Entry not found
+
+       SSEEIINNTTEERRNNAALL         (1015) Internal error
+
+       SSEECCOONNNNDDRROOPP         (1016) Connection closed by rem. end
+
+       SSEEBBAADDIIFFNNAAMM         (1017) Can't get interface name
+
+       SSEECCOOMMEERRRR           (1018) Communication error
+
+       SSEENNOOMMAAPPDDBB          (1019) Can't open mapping database
+
+       SSEENNOOMMAAPPFFNNDD         (1020) No user mapping
+
+       SSEERRTTYYEEXXHHAAUUSSTT       (1021) Retry count exhausted
+
+       SSEEOOPPNNOOTTSSUUPP         (1022) Operation not supported
+
+       SSEEWWOOUULLDDBBLLOOCCKK       (1023) Resource temporarily unavailable
+
+       SSEEIINNPPRROOGGRREESSSS       (1024) Operation now in progress
+
+       SSEECCTTHHRREEAADDIINNIITT      (1025) Cthread initialization error
+
+       SSEECCTTHHRREEAADDEERRRR       (1026) Thread interface call error
+
+       SSEESSYYSSEERRRR           (1027) System error
+
+       SSEEAADDNNSSIINNIITT         (1028) adns_init() error
+
+       SSEEAADDNNSSSSUUBBMMIITT       (1029) adns_submit() error
+
+       SSEEAADDNNSS             (1030) adns resolving error
+
+       SSEEAADDNNSSTTOOOOMMAANNYY      (1031)  adns  returned  more  than  one
+                          entry
+
+       SSEENNOOTTAADDMMIINN         (1032) requestor is not administrator
+
+       SSEEUUSSEERRUUNNKKNN         (1033) User unknown
+
+       SSEEDDUUPPKKEEYY           (1034) Duplicate key value
+
+       SSEEEENNTTRRYYEEXXIISSTTSS      (1035) The entry already exists
+
+       SSEEGGRROOUUPPUUNNKKNN        (1036) Group Unknown
+
+       SSEECCHHEECCKKSSUUMM         (1037) Bad checksum
+
+
+CCOOPPYYTTAAPPEE EERRRROORRSS
+       None yet
+
+
+DDBB EERRRROORRSS
+       The following  error  values  are  returned  only  by  the
+       database package:
+
+       EEDDBB__AA__EESSEESSSSIIOONN     (1201) Cdb api           : invalid ses­
+                          sion
+
+       EEDDBB__AA__EEDDBB          (1202) Cdb api           : invalid db
+
+       EEDDBB__AA__EEIINNVVAALL       (1203)  Cdb  api            :   invalid
+                          value
+
+       EEDDBB__AA__RREESSHHOOSSTT      (1204)  Cdb  api            :  host res
+                          error
+
+       EEDDBB__AA__TTOOOOMMUUCCHH      (1205) Cdb api            :  data  size
+                          rejected
+
+       EEDDBB__AASS__SSOOCCKKEETT      (1206)  Cdb  api     system  : socket()
+                          error
+
+       EEDDBB__AASS__SSOOCCKKOOPPTT     (1207)    Cdb    api       system     :
+                          [set/get]sockopt() error
+
+       EEDDBB__AASS__MMAALLLLOOCC      (1208)  Cdb  api     system  : malloc()
+                          error
+
+       EEDDBB__AA__NNOOEERRRROORR      (1209)  Cdb  api            :  no  last
+                          error
+
+       EEDDBB__AA__IIEEIINNVVAALL      (1200)  Cdb  api            : interface
+                          invalid value
+
+       EEDDBB__AASS__BBIINNDD        (1201) Cdb api           : bind() error
+
+       EEDDBB__AASS__LLIISSTTEENN      (1202)  Cdb  api            :  listen()
+                          error
+
+       EEDDBB__AASS__GGEETTSSOOCCKKNNAAMMEE (1203) Cdb api         :  getsockname()
+                          error
+
+       EEDDBB__AASS__AACCCCEEPPTT      (1204)  Cdb  api            :  accept()
+                          error
+
+       EEDDBB__AASS__GGEETTPPEEEERRNNAAMMEE (1205) Cdb api         :  getpeername()
+                          error
+
+       EEDDBB__AA__WWHHOOIISSIITT      (1206) Cdb api        : Connection from
+                          bad host
+
+       EEDDBB__DD__EEIINNVVAALL       (1220)  Cdb  daemon         :   invalid
+                          value
+
+       EEDDBB__DD__EEAAGGAAIINN       (1221) Cdb daemon        : yet done
+
+       EEDDBB__DD__AAUUTTHH         (1222) Cdb daemon        : unauthorized
+
+       EEDDBB__DD__LLOOGGIINN        (1223)  Cdb   daemon          :   login
+                          refused
+
+       EEDDBB__DD__PPWWDDCCOORRRR      (1224)  Cdb  daemon         :  pwd file
+                          corrupted
+
+       EEDDBB__DD__AANNAA          (1225) Cdb daemon        : db  analysis
+                          error
+
+       EEDDBB__DD__HHAASSHHSSIIZZEE     (1226)  Cdb  daemon         :  bad hash
+                          size
+
+       EEDDBB__DD__UUNNKKNNOOWWNN      (1227)  Cdb   daemon          :   unkn.
+                          db/table/key
+
+       EEDDBB__DD__NNOOLLOOCCKK       (1228)  Cdb  daemon         :  lock  is
+                          required
+
+       EEDDBB__DD__CCOORRRRUUPPTT      (1229)  Cdb  daemon         :  probably
+                          corrupted
+
+       EEDDBB__DD__TTOOOOMMUUCCHH      (1230)  Cdb  daemon         : data size
+                          rejected
+
+       EEDDBB__DD__EENNOOEENNTT       (1231) Cdb daemon        : no entry
+
+       EEDDBB__DD__EETTYYPPEE        (1232) Cdb daemon        : unknown mem­
+                          ber type
+
+       EEDDBB__DD__EEVVAALLUUEE       (1233) Cdb daemon        : unknown mem­
+                          ber val
+
+       EEDDBB__DD__NNUULLLLVVAALLUUEE    (1234) Cdb daemon        : null  member
+                          value
+
+       EEDDBB__DD__LLOOCCKK         (1235)  Cdb daemon        : cannot gain
+                          lock
+
+       EEDDBB__DD__FFRREEEE         (1236) Cdb daemon        : unsafe  free
+                          attempt
+
+       EEDDBB__DD__SSHHUUTTDDOOWWNN     (1237)  Cdb daemon        : shutdown in
+                          progress
+
+       EEDDBB__DD__DDEEAADDLLOOCCKK     (1238) Cdb daemon        : shutdown  in
+                          progress
+
+       EEDDBB__DD__EEXXIISSTT        (1239) Cdb daemon        : yet exists
+
+       EEDDBB__DD__NNOOSSPPCC        (1240)  Cdb  daemon         :  no  more
+                          space
+
+       EEDDBB__DD__DDUUMMPPEENNDD      (1241) Cdb daemon        : end of dump
+
+       EEDDBB__DD__UUNNIIQQUUEE       (1242) Cdb daemon        : uniqued  key
+                          yet exist
+
+       EEDDBB__DD__LLIISSTTEENNDD      (1243) Cdb daemon        : end of list
+
+       EEDDBB__DD__NNOOTTDDUUMMPP      (1244)  Cdb daemon        : not in dump
+                          mode
+
+       EEDDBB__DD__DDNNSSCCHHEECCKK     (1245) Cdb daemon        :  double  DNS
+                          check error
+
+       EEDDBB__DD__RREEJJEECCTTEEDD     (1246)  Cdb  daemon        : Connection
+                          rejected (not authorised)
+
+       EEDDBB__DD__IINNIITT         (1247)  Cdb  daemon         :  init  in
+                          progress
+
+       EEDDBB__DD__IINNCCOONNSSTT      (1248)  Cdb  daemon        : Cdb daemon
+                          : inconsistent request (unstop  and  no
+                          previous stop, unfreeze and no previous
+                          freeze)
+
+       EEDDBB__DD__FFRREEEEHHAASSHHSSIIZZEE (1249) Cdb  daemon         :  bad  free
+                          hash size
+
+       EEDDBB__DDSS__MMAALLLLOOCC      (1250)  Cdb  daemon  system  : malloc()
+                          error
+
+       EEDDBB__DDSS__CCAALLLLOOCC      (1251) Cdb  daemon  system  :  calloc()
+                          error
+
+       EEDDBB__DDSS__RREEAALLLLOOCC     (1252)  Cdb  daemon  system : realloc()
+                          error
+
+       EEDDBB__DDSS__OOPPEENN        (1253) Cdb daemon system : open() error
+
+       EEDDBB__DDSS__FFSSTTAATT       (1254)  Cdb  daemon  system  :  fstat()
+                          error
+
+       EEDDBB__DDSS__LLSSEEEEKK       (1255)  Cdb  daemon  system  :  lseek()
+                          error
+
+       EEDDBB__DDSS__RREEAADD        (1256) Cdb daemon system : read() error
+
+       EEDDBB__DDSS__WWRRIITTEE       (1257)  Cdb  daemon  system  :  write()
+                          error
+
+       EEDDBB__DDSS__RREENNAAMMEE      (1258)  Cdb  daemon  system  : rename()
+                          error
+
+       EEDDBB__DDSS__FFTTRRUUNNCC      (1259) Cdb daemon system :  ftruncate()
+                          error
+
+       EEDDBB__DDSS__TTMMPPNNAAMM      (1260)  Cdb  daemon  system  : tmpnam()
+                          error
+
+       EEDDBB__DDSS__FFCCNNTTLL       (1261)  Cdb  daemon  system  :  fcntl()
+                          error
+
+       EEDDBB__DDSS__MMKKDDIIRR       (1262)  Cdb  daemon  system  :  mkdir()
+                          error
+
+       EEDDBB__DDSS__TTIIMMEESS       (1263)  Cdb  daemon  system  :  times()
+                          error
+
+       EEDDBB__DDSS__SSYYSSCCOONNFF     (1264)  Cdb  daemon  system : sysconf()
+                          err/unav
+
+       EEDDBB__DDSS__GGEETTHHOOSSTTNNAAMMEE (1265) Cdb  daemon  system  :  gethost­
+                          name() error
+
+       EEDDBB__DDSS__GGEETTPPEEEERRNNAAMMEE (1266)  Cdb  daemon  system  : getpeer­
+                          name() error
+
+       EEDDBB__DDSS__IINNEETT__NNTTOOAA   (1267) Cdb  daemon  system  :  getpeer­
+                          name() error
+
+       EEDDBB__DDSS__RREEMMOOVVEE      (1268)  Cdb  daemon  system  : remove()
+                          error
+
+       EEDDBB__DDSS__SSIIGGAACCTTIIOONN   (1269) Cdb daemon system :  sigaction()
+                          error
+
+       EEDDBB__DDSS__GGEETTSSOOCCKKNNAAMMEE (1270)  Cdb  daemon  system  : getsock­
+                          name() error
+
+       EEDDBB__DDSS__BBIINNDD        (1271) Cdb daemon system : bind() error
+
+       EEDDBB__DDSS__LLIISSTTEENN      (1272)  Cdb  daemon  system  : listen()
+                          error
+
+       EEDDBB__DDSS__CCOONNNNEECCTT     (1273) Cdb daemon  system  :  connect()
+                          error
+
+       EEDDBB__DDSS__SSOOCCKKEETT      (1274)  Cdb  daemon  system  : socket()
+                          error
+
+       EEDDBB__DDSS__SSOOCCKKOOPPTT     (1275)    Cdb    daemon    system     :
+                          [set/get]sockopt() error
+
+       EEDDBB__DD__RREESSHHOOSSTT      (1276) Cdb daemon     : host res error
+
+       ((11227777)) CCddbb ddaaeemmoonn     :: rreeqquueesstt ttoooo bbiigg
+
+       EEDDBB__CC__EEIINNVVAALL       (1280)   Cdb  config         :  invalid
+                          value
+
+       EEDDBB__CC__EENNOOEENNTT       (1281) Cdb config         :  configura­
+                          tion error
+
+       EEDDBB__CC__TTOOOOMMUUCCHH      (1282)  Cdb  config        : conf. size
+                          rejected
+
+       EEDDBB__CCSS__GGEETTHHOOSSTTNNAAMMEE (1283) Cdb  config  system  :  gethost­
+                          name() error
+
+       EEDDBB__NNOOMMOORREEDDBB       (1290)  Cdb : nomoredb (the API retries
+                          automatically in such  a  case  so  you
+                          should never see this error number)
+
+
+MMSSGG EERRRROORRSS
+       The  following  error values are returned only by the mes­
+       sage package:
+
+       EEMMSSMMSSGGUU22RREEPP        (1301) msg daemon unable to reply
+
+       EEMMSSMMSSGGSSYYEERRRR        (1302) msg daemon system error
+
+       EEMMSSNNOOPPEERRMM          (1303) Permission denied
+
+
+NNSS EERRRROORRSS
+       The following error values are returned only by  the  name
+       server package:
+
+       EENNSSNNAACCTT            (1401)  name  server not active or ser­
+                          vice being drained
+
+
+RRFFIIOO EERRRROORRSS
+       The following error values are returned only by the remote
+       file I/O package:
+
+       EERRFFNNOORRCCOODDEE         (1501) RFIO communication error
+
+       EERRFFHHOOSSTTRREEFFUUSSEEDD     (1502) RFIO rejected connect attempt
+
+       EERRFFXXHHOOSSTT           (1503) Cross-host link (rename())
+
+       EERRFFPPRROOTTOONNOOTTSSUUPP     (1504) RFIO protocol not supported
+
+
+RRTTCCOOPPYY EERRRROORRSS
+       The following error values are returned only by the remote
+       tape copy package:
+
+       EERRTTTTMMSSEERRRR          (1601) TMS call failed
+
+       EERRTTBBLLKKSSKKPPDD         (1602) Blocks were skipped in file
+
+       EERRTTTTPPEE__LLSSZZ         (1603) Blocks skipped  and  file  trun­
+                          cated
+
+       EERRTTMMNNYYPPAARRYY         (1604) Too many skipped blocks
+
+       EERRTTLLIIMMBBYYSSZZ         (1605) File limited by size
+
+       EERRTTUUSSIINNTTRR          (1606) Request interrupted by user
+
+       EERRTTOOPPIINNTTRR          (1607) Request interrupted by operator
+
+       EERRTTNNOOTTCCLLIISSTT        (1608) Request list is not circular
+
+       EERRTTBBAADDRREEQQ          (1609) Bad request structure
+
+
+SSTTAAGGEE EERRRROORRSS
+       The following error values are returned only by the stager
+       package:
+
+       EESSTTCCLLEEAARREEDD         (1701) aborted by stageclr
+
+       EESSTTEENNOOUUGGHHFF         (1702) enough free space
+
+       EESSTTLLNNKKNNCCRR          (1703) symbolic link not created
+
+       EESSTTLLNNKKNNSSUUPP         (1704) symbolic link not supported
+
+       EESSTTNNAACCTT            (1705) Stager not active
+
+       EESSTTGGRROOUUPP           (1706) Your group is invalid
+
+       EESSTTGGRRPPUUSSEERR         (1707) No GRPUSER in configuration
+
+       EESSTTUUSSEERR            (1708) Invalid user
+
+       EESSTTHHSSMMHHOOSSTT         (1709) HSM HOST not specified
+
+       EESSTTTTMMSSCCHHEECCKK        (1710) tmscheck error
+
+       EESSTTLLIINNKKNNAAMMEE        (1711) User link name processing error
+
+       EESSTTWWRRIITTAABBLLEE        (1712)  User  path  in  a  non-writable
+                          directory
+
+       EESSTTKKIILLLLEEDD          (1713) aborted by kill
+
+       EESSTTMMEEMM             (1714) request too long (api)
+
+       EESSTTCCOONNFF            (1715) stage configuration error
+
+
+SSYYSSRREEQQ EERRRROORRSS
+       The  following  error value is returned only by the sysreq
+       package:
+
+       EESSQQTTMMSSNNOOTTAACCTT       (1801) TMS not active
+
+
+TTAAPPEE EERRRROORRSS
+       The following error values are returned only by  the  tape
+       package:
+
+       EETTDDNNPP              (1901) daemon not available
+
+       EETTSSYYSS              (1902) system error
+
+       EETTPPRRMM              (1903) bad parameter
+
+       EETTRRSSVV              (1904) reserv already issued
+
+       EETTNNDDVV              (1905) too many drives requested
+
+       EETTIIDDGG              (1906) invalid device group name
+
+       EETTNNRRSS              (1907) reserv not done
+
+       EETTIIDDNN              (1908)  no drive with requested charac­
+                          teristics
+
+       EETTLLBBLL              (1909) bad label structure
+
+       EETTFFSSQQ              (1910) bad file sequence number
+
+       EETTIINNTTRR             (1911) interrupted by user
+
+       EETTEEOOVV              (1912) EOV found in multivolume set
+
+       EETTRRLLSSPP             (1913) release pending
+
+       EETTBBLLAANNKK            (1914) blank tape
+
+       EETTCCOOMMPPAA            (1915) compatibility problem
+
+       EETTHHWWEERRRR            (1916) device malfunction
+
+       EETTPPAARRIITT            (1917) parity error
+
+       EETTUUNNRREECC            (1918) unrecoverable media error
+
+       EETTNNOOSSNNSS            (1919) no sense
+
+       EETTRRSSLLTT             (1920) reselect server
+
+       EETTVVBBSSYY             (1921) volume busy or inaccessible
+
+       EETTDDCCAA              (1922) drive currently assigned
+
+       EETTNNRRDDYY             (1923) drive not ready
+
+       EETTAABBSSEENNTT           (1924) volume absent
+
+       EETTAARRCCHH             (1925) volume archived
+
+       EETTHHEELLDD             (1926) volume held or disabled
+
+       EETTNNXXPPDD             (1927) file not expired
+
+       EETTOOPPAABB             (1928) operator cancel
+
+       EETTVVUUNNKKNN            (1929) volume unknown
+
+       EETTWWLLBBLL             (1930) wrong label type
+
+       EETTWWPPRROOTT            (1931) cartridge write protected
+
+       EETTWWVVSSNN             (1932) wrong vsn
+
+       EETTBBAADDMMIIRR           (1933) Tape has a bad MIR
+
+
+VVMMGGRR EERRRROORRSS
+       The following error values are returned only by the volume
+       manager package:
+
+       EEVVMMGGRRNNAACCTT          (2001)  volume  manager  not  active or
+                          service being drained
+
+
+VVDDQQMM EERRRROORRSS
+       The following error values are returned only by the volume
+       and drive queue manager package:
+
+       EEVVQQSSYYEERRRR           (2101) Failed system call
+
+       EEVVQQIINNCCOONNSSIISSTT       (2102) Internal DB inconsistency
+
+       EEVVQQRREEPPLLIICCAA         (2103) DB replication failed
+
+       EEVVQQNNOOVVOOLL           (2104) No volume request queued
+
+       EEVVQQNNOODDRRVV           (2105) No free drive available
+
+       EEVVQQNNOOSSVVOOLL          (2106) Specified vol. req. not found
+
+       EEVVQQNNOOSSDDRRVV          (2107) Specified drv. req. not found
+
+       EEVVQQAALLRREEAADDYY         (2108)   Specified  vol.  req.  already
+                          exists
+
+       EEVVQQUUNNNNOOTTUUPP         (2109) Unit not up
+
+       EEVVQQBBAADDSSTTAATT         (2110) Bad unit status request
+
+       EEVVQQBBAADDIIDD           (2111) Incorrect vol.req or job ID
+
+       EEVVQQBBAADDJJOOBBIIDD        (2112) Incorrect job ID
+
+       EEVVQQNNOOTTAASSSS          (2113) Unit not assigned
+
+       EEVVQQBBAADDVVOOLLIIDD        (2114)  Attempt  to  mount  with  wrong
+                          VOLID
+
+       EEVVQQRREEQQAASSSS          (2115)  Attempt  to  delete an assigned
+                          req
+
+       EEVVQQDDGGNNIINNVVLL         (2116) Vol. req. for non-existing DGN
+
+       EEVVQQPPIIPPEEFFUULLLL        (2117) Replication pipe is full
+
+       EEVVQQHHOOLLDD            (2118) Server is held
+
+       EEVVQQEEOOQQRREEAACCHHEEDD      (2119) End of query reached
+
+
+RRMMCC EERRRROORRSS
+       The following error values are returned only by the Remote
+       SCSI media changer server package:
+
+       EERRMMCCNNAACCTT           (2201) Remote SCSI media changer server
+                          not active or service being drained
+
+       EERRMMCCRRBBTTEERRRR         (2202) Remote SCSI media changer error
+
+       EERRMMCCUUNNRREECC          (2203) Remote SCSI media changer unrec.
+                          error
+
+       EERRMMCCSSLLOOWWRR          (2204)  Remote SCSI media changer error
+                          (slow retry)
+
+       EERRMMCCFFAASSTTRR          (2205) Remote SCSI media changer  error
+                          (fast retry)
+
+       EERRMMCCDDFFOORRCCEE         (2206)  Remote SCSI media changer error
+                          (demount force)
+
+       EERRMMCCDDDDOOWWNN          (2207) Remote SCSI media changer  error
+                          (drive down)
+
+       EERRMMCCOOMMSSGGNN          (2208)  Remote SCSI media changer error
+                          (ops message)
+
+       EERRMMCCOOMMSSGGSS          (2209) Remote SCSI media changer  error
+                          (ops message + retry)
+
+       EERRMMCCOOMMSSGGRR          (2210)  Remote SCSI media changer error
+                          (ops message + wait)
+
+       EERRMMCCUUNNLLOOAADD         (2211) Remote SCSI media changer  error
+                          (unload + demount)
+
+
+MMOONN EERRRROORRSS
+       The  following error values are returned only by the Moni­
+       toring package:
+
+       EEMMOONN__SSYYSSTTEEMM        (2301) System error
+
+       EEMMOONN__NNOO__HHOOSSTT       (2302) Monitor Host not specified
+
+       EEMMOONN__NNOO__PPOORRTT       (2303) Monitor Port not specified
+
+       EEMMOONN__NNOO__CCLLIIEENNTTPPOORRTT (2304)  No  port  for  client  requests
+                          defined in the configuration
+
+
+UUPPVV EERRRROORRSS
+       The  following  error values are returned only by the User
+       Privilege Validation package:
+
+       EECCUUPPVVNNAACCTT          (2401) UPV not active or service  being
+                          drained
+
+
+DDLLFF EERRRROORRSS
+       The  following  error values are returned only by the Dis­
+       tributed Logging Facility package:
+
+       EEDDLLFFNNAACCTT           (2501) Logging facility not  active  or
+                          service being drained
+
+       EEDDLLFFNNOOFFAACC          (2502) No such facility in the database
+
+       EEDDLLFFRREEFFEEXXIISSTT       (2503) References exist
+
+       EEDDLLFFNNOOTTFFOOUUNNDD       (2504)  Row  was  not  found   in   the
+                          database
+
+       EEDDLLFFLLOOGGFFOORRMMAATT      (2504) Log file format error
+
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/03/02 09:09:11              SERRNO(3)

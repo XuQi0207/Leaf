@@ -1,0 +1,34 @@
+NSRENAME(1)             Cns User Commands             NSRENAME(1)
+
+
+
+NNAAMMEE
+       nsrename  -  rename a CASTOR file or directory in the name
+       server
+
+SSYYNNOOPPSSIISS
+       nnssrreennaammee _o_l_d_p_a_t_h _n_e_w_p_a_t_h
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssrreennaammee renames a CASTOR file or directory  in  the  name
+       server.
+
+       This  requires write permission in the parent directories.
+
+       If _o_l_d_p_a_t_h or _n_e_w_p_a_t_h does not start with //,  it  is  pre­
+       fixed  by the content of the CCAASSTTOORR__HHOOMMEE environment vari­
+       able.
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__rreennaammee((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52            NSRENAME(1)

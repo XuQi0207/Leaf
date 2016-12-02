@@ -1,0 +1,44 @@
+NSDELETECLASS(1)    Cns Administrator Commands   NSDELETECLASS(1)
+
+
+
+NNAAMMEE
+       nsdeleteclass - delete a fileclass definition
+
+SSYYNNOOPPSSIISS
+       nnssddeelleetteeccllaassss   ----iidd   _c_l_a_s_s_i_d   ----nnaammee  _c_l_a_s_s___n_a_m_e  [  --hh
+       _n_a_m_e___s_e_r_v_e_r ]
+
+DDEESSCCRRIIPPTTIIOONN
+       nnssddeelleetteeccllaassss deletes a fileclass definition.   The  file­
+       class  can  be identified by _c_l_a_s_s_i_d or by _c_l_a_s_s___n_a_m_e.  If
+       both are specified, they must point at the same class.
+
+       This  command  requires  ADMIN  privilege  in   the   Cupv
+       database.
+
+OOPPTTIIOONNSS
+       --hh _n_a_m_e___s_e_r_v_e_r
+
+       ----iidd _c_l_a_s_s_i_d
+              The class number of the class to be deleted.
+
+       ----nnaammee _c_l_a_s_s___n_a_m_e
+              The name of the class to be deleted.
+
+EEXXAAMMPPLLEESS
+       nsdeleteclass --id 2 --name user
+
+EEXXIITT SSTTAATTUUSS
+       This  program returns 0 if the operation was successful or
+       >0 if the operation failed.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__ddeelleetteeccllaassss((33)), CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/08/23 12:48:51       NSDELETECLASS(1)

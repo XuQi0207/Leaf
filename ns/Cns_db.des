@@ -1,0 +1,103 @@
+/*
+ * Copyright (C) 1999-2002 by CERN/IT/PDP/DM
+ * All rights reserved
+ */
+
+/*
+ * @(#)Cns_db.des,v 1.18 2002/01/30 09:35:23 CERN IT-PDP/DM Jean-Philippe Baud
+ */
+
+#include "../h/Castor_limits.h"
+
+			/* name server Cdb database */
+
+database cns_db {
+    hashsize    10000;
+    table Cns_class_metadata_db {
+	int 	classid;
+	char	name[CA_MAXCLASNAMELEN+1];
+	uid_t	uid;
+	gid_t	gid;
+	int	min_filesize;	/* in Mbytes */
+	int	max_filesize;	/* in Mbytes */
+	int	flags;
+	int	maxdrives;
+	int	max_segsize;	/* in Mbytes */
+	int	migr_time_interval;
+	int	mintime_beforemigr;
+	int	nbcopies;
+	int	nbdirs_using_class;
+	int	retenp_on_disk;
+	unique key classid {
+	    classid;
+	};
+	unique key class_name {
+	    name;
+	};
+    };
+
+    table Cns_tp_pool_db {
+	int	classid;
+	char	tape_pool[CA_MAXPOOLNAMELEN+1];
+	key classid {
+	    classid;
+	};
+    };
+
+    table Cns_file_metadata_db {
+	u_signed64	fileid;
+	u_signed64	parent_fileid;
+	char		name[CA_MAXNAMELEN+1];
+	mode_t		filemode;
+	int		nlink;		/* number of files in a directory */
+	uid_t		uid;
+	gid_t		gid;
+	u_signed64	filesize;
+	time_t		atime;		/* last access to file */
+	time_t		mtime;		/* last file modification */
+	time_t		ctime;		/* last metadata modification */
+	short		fileclass;	/* 1 --> experiment, 2 --> user */
+	char		status;		/* '-' --> online, 'm' --> migrated */
+	unique key fileid {
+	    fileid;
+	};
+	unique key file_full_id {
+	    order ascending;
+	    parent_fileid;
+	    name;
+	};
+    };
+
+    table Cns_user_metadata_db {
+	u_signed64	u_fileid;
+	char		comments[CA_MAXCOMMENTLEN+1];	/* user comments */
+	unique key u_fileid {
+	    u_fileid;
+	};
+    };
+
+    table Cns_seg_metadata_db {
+	u_signed64	s_fileid;
+	int		copyno;
+	int		fsec;		/* file section number */
+	u_signed64	segsize;	/* file section size */
+	int		compression;	/* compression factor */
+	char		s_status;	/* 'd' --> deleted */
+	char		vid[CA_MAXVIDLEN+1];
+	int		side;
+	int		fseq;		/* file sequence number */
+	raw		blockid[4];	/* for positionning with locate command */
+	unique key seg_full_id {
+	    order ascending;
+	    s_fileid;
+	    copyno;
+	    fsec;
+	};
+	unique key seg_vid_fseq {
+	    order ascending;
+	    vid;
+	    side;
+	    fseq;
+	};
+    };
+};

@@ -1,0 +1,103 @@
+NSENTERCLASS(1)     Cns Administrator Commands    NSENTERCLASS(1)
+
+
+
+NNAAMMEE
+       nsenterclass - define a new file class
+
+SSYYNNOOPPSSIISS
+       nnsseenntteerrccllaassss   ----iidd   _c_l_a_s_s_i_d   ----nnaammee   _c_l_a_s_s___n_a_m_e  [  --hh
+       _n_a_m_e___s_e_r_v_e_r ] [ ----ffllaaggss _f_l_a_g_s ]  [  ----ggiidd  _c_l_a_s_s___g_i_d  ]  [
+       ----ggrroouupp  _c_l_a_s_s___g_r_o_u_p ] [ ----mmaaxxddrriivveess _n ] [ ----mmaaxxffiilleessiizzee _n
+       ] [ ----mmaaxxsseeggssiizzee _n ] [ ----mmiiggrr__iinntteerrvvaall _n ] [ ----mmiinnffiilleessiizzee
+       _n  ] [ ----mmiinnttiimmee _n ] [ ----nnbbccooppiieess _n ] [ ----rreetteennpp__oonn__ddiisskk _n
+       ] [ ----ttppppoooollss _p_o_o_l_1_:_p_o_o_l_2_._._.  ]  [  ----uuiidd  _c_l_a_s_s___u_i_d  ]  [
+       ----uusseerr _c_l_a_s_s___u_s_e_r ]
+
+DDEESSCCRRIIPPTTIIOONN
+       nnsseenntteerrccllaassss defines a new file class.
+
+       This   command   requires  ADMIN  privilege  in  the  Cupv
+       database.
+
+OOPPTTIIOONNSS
+       --hh _n_a_m_e___s_e_r_v_e_r
+
+       ----ffllaaggss _f_l_a_g_s
+
+       ----ggiidd _c_l_a_s_s___g_i_d
+              The class is restricted to this group gid.
+
+       ----iidd _c_l_a_s_s_i_d
+              The class number must be strictly positive.
+
+       ----mmaaxxddrriivveess _n
+              Specifies the number of drives which can be used in
+              parallel for a migration.
+
+       ----mmaaxxffiilleessiizzee _n
+              Specifies  the maximum file size. There is no limit
+              by default.
+
+       ----mmaaxxsseeggssiizzee _n
+              Specifies the maximum segment  size.  There  is  no
+              limit by default.
+
+       ----mmiiggrr__iinntteerrvvaall _n
+              A  new migration will be started if at least _n sec­
+              onds have elapsed since the last migration.
+
+       ----mmiinnffiilleessiizzee _n
+              Specifies the minimum file size. The default  value
+              is 0.
+
+       ----mmiinnttiimmee _n
+              A  file will not be migrated unless at least _n sec­
+              onds have elapsed since the last update.
+
+       ----nnaammee _c_l_a_s_s___n_a_m_e
+              The class name must be  at  most  CA_MAXCLASNAMELEN
+              characters long.
+
+       ----nnbbccooppiieess _n
+              Specifies  the  number  of  copies for a file. Each
+              copy is written to a different tape pool.
+
+       ----rreetteennpp__oonn__ddiisskk _n
+              Specifies the maximum retention period (in seconds)
+              for  a file on disk.  The retention period can also
+              be set to AS_LONG_AS_POSSIBLE or INFINITE_LIFETIME.
+              If  zero,  the  file  is  purged  immediately after
+              migration.  Default  is  AS_LONG_AS_POSSIBLE,  i.e.
+              purged when disk space is needed.
+
+       ----ttppppoooollss _p_o_o_l_1_:_p_o_o_l_2_._._.
+              Specifies  the tape pools to be used for migration.
+              The number of tape pools must be at least as big as
+              the  number  of copies.  Pool names must be at most
+              CA_MAXPOOLNAMELEN characters long.
+
+       ----uuiidd _c_l_a_s_s___u_i_d
+              The class is restricted to this user uid.
+
+EEXXAAMMPPLLEESS
+       nsenterclass --id 2 --name user --maxd 2 --migr 60 --nbco 1 --tppools default
+
+EEXXIITT SSTTAATTUUSS
+       This program returns 0 if the operation was successful  or
+       >0 if the operation failed.
+
+FFIILLEESS
+       //eettcc//ggrroouupp
+
+       //eettcc//ppaasssswwdd
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__eenntteerrccllaassss((33)), CCuuppvvlliisstt((11))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2002/08/23 12:48:51        NSENTERCLASS(1)

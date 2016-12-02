@@ -1,0 +1,99 @@
+CNS_GETSEGATTRS(3)    Cns Library Functions    CNS_GETSEGATTRS(3)
+
+
+
+NNAAMMEE
+       Cns_getsegattrs - get file segment attributes
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       iinntt  CCnnss__ggeettsseeggaattttrrss  ((ccoonnsstt cchhaarr **_p_a_t_h,, ssttrruucctt CCnnss__ffiilleeiidd
+       **_f_i_l_e___u_n_i_q_u_e_i_d,, iinntt **_n_b_s_e_g,, ssttrruucctt  CCnnss__sseeggaattttrrss  ****_s_e_g_a_t_­
+       _t_r_s))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__ggeettsseeggaattttrrss gets the file segment(s) attributes.  This
+       function should be called by the stager to  get  the  tape
+       visual  identifier and the file sequence number or blockid
+       before executing tpread.  The file can  be  identified  by
+       _p_a_t_h  name  or  by  _f_i_l_e___u_n_i_q_u_e_i_d.  If both are specified,
+       _f_i_l_e___u_n_i_q_u_e_i_d is used.
+
+       _p_a_t_h   specifies the logical pathname relative to the cur­
+              rent  CASTOR directory or the full CASTOR pathname.
+
+       _s_e_g_a_t_t_r_s
+              is a pointer to an array of Cns_segattrs structures
+              allocated  by  the  API.  The client application is
+              responsible for freeing the array when  not  needed
+              anymore.
+
+       struct Cns_segattrs {
+               int             copyno;
+               int             fsec;           /* file section number */
+               u_signed64      segsize;        /* file section size */
+               int             compression;    /* compression factor */
+               char            s_status;       /* 'd' --> deleted */
+               char            vid[CA_MAXVIDLEN+1];
+               int             side;
+               int             fseq;           /* file sequence number */
+               unsigned char   blockid[4];     /* for positionning with locate */
+               char            checksum_name[CA_MAXCKSUMNAMELEN+1];
+               unsigned long   checksum;
+       };
+
+       _c_o_p_y_n_o is the copy number.
+
+       _f_s_e_c   is the file segment number, It is 1 for single vol­
+              ume files and >= 1 for files spanning over  several
+              tapes.
+
+RREETTUURRNN VVAALLUUEE
+       This  routine returns 0 if the operation was successful or
+       -1 if the operation failed. In the latter case, sseerrrrnnoo  is
+       set appropriately.
+
+EERRRROORRSS
+       EENNOOEENNTT       The referenced file does not exist anymore.
+
+       EENNOOMMEEMM       Memory  could not be allocated for the output
+                    buffer.
+
+       EEAACCCCEESS       Search permission is denied on a component of
+                    the  _p_a_t_h prefix or the caller effective user
+                    ID does not match the owner ID of the file or
+                    write   permission  on  the  file  itself  is
+                    denied.
+
+       EEFFAAUULLTT       _p_a_t_h and _f_i_l_e___u_n_i_q_u_e_i_d, _n_b_s_e_g or _s_e_g_a_t_t_r_s  is
+                    a NULL pointer.
+
+       EENNOOTTDDIIRR      A  component  of  _p_a_t_h prefix is not a direc­
+                    tory.
+
+       EEIISSDDIIRR       The file is not a regular file.
+
+       EENNAAMMEETTOOOOLLOONNGG The length of _p_a_t_h exceeds  CCAA__MMAAXXPPAATTHHLLEENN  or
+                    the   length  of  a  _p_a_t_h  component  exceeds
+                    CCAA__MMAAXXNNAAMMEELLEENN.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__cchhddiirr((33)), CCnnss__sseettsseeggaattttrrss((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2004/03/03 08:51:30     CNS_GETSEGATTRS(3)

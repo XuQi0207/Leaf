@@ -1,0 +1,76 @@
+CNS_QUERYCLASS(3)     Cns Library Functions     CNS_QUERYCLASS(3)
+
+
+
+NNAAMMEE
+       Cns_queryclass - query about a fileclass definition in the
+       name server
+
+SSYYNNOOPPSSIISS
+       ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+       ##iinncclluuddee ""CCnnss__aappii..hh""
+
+       iinntt  CCnnss__qquueerryyccllaassss  ((cchhaarr  **_s_e_r_v_e_r,,  iinntt  _c_l_a_s_s_i_d,,   cchhaarr
+       **_c_l_a_s_s___n_a_m_e,, ssttrruucctt CCnnss__ffiilleeccllaassss **_C_n_s___f_i_l_e_c_l_a_s_s))
+
+DDEESSCCRRIIPPTTIIOONN
+       CCnnss__qquueerryyccllaassss queries about a fileclass definition in the
+       name server.  The fileclass can be identified  by  _c_l_a_s_s_i_d
+       or  by _c_l_a_s_s___n_a_m_e.  If both are specified, they must point
+       at the same class.
+
+       _s_e_r_v_e_r specifies the CASTOR Name Server  where  the  file­
+              class is currently defined.
+
+       _C_n_s___f_i_l_e_c_l_a_s_s
+              is  a  pointer  to the structure which will receive
+              the fileclass description:
+
+       struct Cns_fileclass {
+               int     classid;
+               char    name[CA_MAXCLASNAMELEN+1];
+               uid_t   uid;
+               gid_t   gid;
+               int     min_filesize;   /* in Mbytes */
+               int     max_filesize;   /* in Mbytes */
+               int     flags;
+               int     maxdrives;
+               int     max_segsize;    /* in Mbytes */
+               int     migr_time_interval;
+               int     mintime_beforemigr;
+               int     nbcopies;
+               int     retenp_on_disk;
+               int     nbtppools;
+               char    *tppools;
+       };
+
+RREETTUURRNN VVAALLUUEE
+       This routine returns 0 if the operation was successful  or
+       -1  if the operation failed. In the latter case, sseerrrrnnoo is
+       set appropriately.
+
+EERRRROORRSS
+       EENNOOEENNTT       The named fileclass does not exist.
+
+       EEIINNVVAALL       _c_l_a_s_s_i_d and _c_l_a_s_s___n_a_m_e do not point  at  same
+                    class  entry  or  the  length  of  _c_l_a_s_s___n_a_m_e
+                    exceeds CCAA__MMAAXXCCLLAASSNNAAMMEELLEENN.
+
+       SSEENNOOSSHHOOSSTT    Host unknown.
+
+       SSEENNOOSSSSEERRVV    Service unknown.
+
+       SSEECCOOMMEERRRR     Communication error.
+
+       EENNSSNNAACCTT      Name server is not running or is being  shut­
+                    down.
+
+SSEEEE AALLSSOO
+       CCaassttoorr__lliimmiittss((44)), CCnnss__eenntteerrccllaassss((33))
+
+AAUUTTHHOORR
+       CCAASSTTOORR Team <castor.support@cern.ch>
+
+
+
+CASTOR                 2001/09/26 09:13:52      CNS_QUERYCLASS(3)
