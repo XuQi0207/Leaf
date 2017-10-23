@@ -46,7 +46,11 @@ CREATE TABLE Cns_file_metadata (
        mtime INTEGER,
        ctime INTEGER,
        fileclass SMALLINT,
-       status CHAR(1) BINARY)
+       status CHAR(1) BINARY,
+       dev  INTEGER UNSIGNED,
+        path VARCHAR(231) BINARY,
+        ino  INTEGER UNSIGNED,
+        bitmap varchar(61440) BINARY)
 	ENGINE = InnoDB;
 
 CREATE TABLE Cns_user_metadata (
@@ -75,26 +79,6 @@ CREATE TABLE Cns_unique_id (
        id BIGINT UNSIGNED)
 	ENGINE = InnoDB;
 
-CREATE TABLE Cns_file_transform_metadata(
-      rowid BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-       fileid BIGINT UNSIGNED,
-       parent_fileid BIGINT UNSIGNED,
-       name VARCHAR(231) BINARY,
-       mode INTEGER UNSIGNED,
-       dev  INTEGER UNSIGNED,
-	path VARCHAR(231) BINARY,
-	ino  INTEGER UNSIGNED,
-	nlink INTEGER,
-       uid INTEGER UNSIGNED,
-       gid INTEGER UNSIGNED,
-       size BIGINT UNSIGNED,
-       atime INTEGER,
-       mtime INTEGER,
-       ctime INTEGER,
-       fileclass SMALLINT,
-       status CHAR(1) BINARY)
-        ENGINE = InnoDB;
-
 CREATE TABLE Cns_file_transform_metadata (
        rowid BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
        fileid BIGINT UNSIGNED,
@@ -113,14 +97,19 @@ CREATE TABLE Cns_file_transform_metadata (
        ctime INTEGER,
        fileclass SMALLINT,
        status CHAR(1) BINARY,
-	bitmap VARCHAR(600) BINARY)
+	bitmap varchar(61440) BINARY)
         ENGINE = InnoDB;
 
 CREATE TABLE Cns_unique_transform_id (
        id BIGINT UNSIGNED)
         ENGINE = InnoDB;
 
-
+CREATE TABLE Cns_seg_transform_metadata(
+	rowid BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	FD BIGINT UNSIGNED,
+	seg_size FLOAT,
+	path VARCHAR(231) BINARY)
+	ENGINE =InnoDB;
 
 ALTER TABLE Cns_class_metadata
        ADD UNIQUE (classid),

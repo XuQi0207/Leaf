@@ -15,7 +15,7 @@
 #include "serrno.h"
 
 int DLL_DECL
-Cns_get_Data_daemon(const char *path,struct Cns_file_transform_stat *fst)
+Cns_get_Data_daemon(const char *path, struct Cns_filestat *filentry)
 {
 	char *actual_path;
 	int c;
@@ -23,7 +23,7 @@ Cns_get_Data_daemon(const char *path,struct Cns_file_transform_stat *fst)
 	int msglen;
 	char *q;
 	char *rbp;
-	char repbuf[CA_MAXCOMMENTLEN+1];
+	char repbuf[5700];
 	char *sbp;
 	char sendbuf[REQBUFSZ];
 	char server[CA_MAXHOSTNAMELEN+1];
@@ -33,7 +33,7 @@ Cns_get_Data_daemon(const char *path,struct Cns_file_transform_stat *fst)
 	if (Cns_apiinit (&thip))
 		return (-1);
 	
-	if (! path || ! (&fst)) {
+	if (! path || ! (&filentry)) {
 		serrno = EFAULT;
 		return (-1);
 	}      
@@ -53,33 +53,31 @@ Cns_get_Data_daemon(const char *path,struct Cns_file_transform_stat *fst)
 
         marshall_HYPER(sbp,thip->cwd);
         marshall_STRING(sbp, path);
-    //    marshall_STRING(sbp, filename);
-
         msglen = sbp - sendbuf;
         marshall_LONG(q, msglen);
 
-        while((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, sizeof(repbuf))) &&
-              serrno == ENSNACT)
+        while((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, sizeof(repbuf))) && serrno == ENSNACT)
             sleep(RETRYI);
 
         /* debuild request */
         if(c == 0){
-            rbp =repbuf;
-            unmarshall_LONG (rbp, fst->uid);
-            unmarshall_LONG (rbp, fst->gid);
-            unmarshall_LONG (rbp, fst->ino);
-            unmarshall_LONG (rbp, fst->mtime);
-            unmarshall_LONG (rbp, fst->ctime);
-            unmarshall_LONG (rbp, fst->atime);
-            unmarshall_LONG (rbp, fst->nlink);
-            unmarshall_LONG (rbp, fst->dev);
-            unmarshall_STRING (rbp, fst->path);
-            unmarshall_LONG (rbp, fst->size);
-            unmarshall_LONG (rbp, fst->mode);
-            unmarshall_HYPER (rbp, thip->cwd);
-	    unmarshall_STRING (rbp, fst->filena);
-	    
-        }
+	rbp =repbuf;
+	unmarshall_HYPER (rbp, filentry->fileid);
+	unmarshall_LONG (rbp, filentry->uid);
+        unmarshall_LONG (rbp, filentry->gid);
+        unmarshall_LONG (rbp, filentry->ino);
+        unmarshall_TIME_T (rbp, filentry->mtime);
+        unmarshall_TIME_T (rbp, filentry->ctime);
+        unmarshall_TIME_T (rbp, filentry->atime);
+        unmarshall_LONG (rbp, filentry->nlink);
+        unmarshall_LONG (rbp, filentry->dev);
+        unmarshall_HYPER (rbp, filentry->filesize);
+        unmarshall_WORD (rbp, filentry->filemode);
+        unmarshall_WORD (rbp, filentry->fileclass);
+        unmarshall_BYTE (rbp, filentry->status);
+        unmarshall_STRING (rbp, filentry->path);
+        unmarshall_STRING (rbp, filentry->name);
+      }
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
 	return (c);
 }

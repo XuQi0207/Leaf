@@ -38,7 +38,7 @@ Cns_getcwd(char *buf, int size)
 		return (NULL);
 	}
 	if (! buf) {
-		if ((buf = malloc (size)) == NULL) {
+		if ((buf = (char *)malloc (size)) == NULL) {
 			serrno = ENOMEM;
 			return (NULL);
 		}

@@ -31,7 +31,7 @@
  * O_EXCL	002000		004000	!	000200  !	000040 !
  */
 
-#if defined(sun) || defined(ultrix) || defined(sgi) || defined(CRAY) || defined(apollo) || defined(hpux) || defined(_AIX) || (defined(__osf__) && defined(__alpha)) || defined(linux) || defined(_WIN32) || defined(__Lynx__)
+#if defined(sun) || defined(ultrix) || defined(sgi) || defined(CRAY) || defined(apollo) || defined(hpux) || defined(_AIX) || (defined(__osf__) && defined(__alpha)) || defined(_WIN32) || defined(__Lynx__) || defined(__linux) || defined(__linux__)
 
 #if defined(sgi) || defined(CRAY) || defined(apollo) || defined(hpux) || (defined(_AIX) && defined(_IBMR2))  || defined(SOLARIS) || defined(_WIN32) 
 #define htonopnflg(A)		(A)
@@ -43,7 +43,7 @@
 #define ntohopnflg(A)		(((A) & ~(003400)) | (((A) & 003400) << 1))
 #endif	/* sun || ultrix || AIXESA || alpha-osf */
 
-#if defined(linux)
+#if defined(__linux) || defined(__linux__)
 #define htonopnflg(A)		(((A) & 004000) >> 9) | (((A) & 002000) >> 7) | \
 				(((A) & 000100) << 2) | (((A) & 000200) << 3) | \
 				((A) & 001003)

@@ -20,6 +20,9 @@
 #endif
 #include "Cns_constants.h"
 #include "osdep.h"
+#include <vector>
+#include <string>
+using namespace std;
 
 int *C__Cns_errno();
 #define Cns_errno (*C__Cns_errno())
@@ -191,6 +194,30 @@ char bitmap[600];
 
 
 			/* function prototypes */
+EXTERN_C int Cns_getattr_id(int fileid, struct Cns_file_transform_stat *buf);
+EXTERN_C int Cns_touch_t(const char *path, char *location);
+EXTERN_C int Cns_access_t(const char *path,int mask);
+EXTERN_C int Cns_open_t(const char *path, int flags);
+EXTERN_C int Cns_read_t(const char *path, char * buf, size_t size, off_t offset, char *remote_path);
+EXTERN_C int Cns_stat_t(const char *path, struct stat *buf);
+EXTERN_C int Cns_opendir_t_xrd(const char *path, int * child_dirid);
+EXTERN_C int Cns_file_create(const char *path, char *actual_path, int filesize);
+EXTERN_C int Cns_download_seg(const char *path, off_t offset, size_t size, char *location, int filesize);
+EXTERN_C int Cns_cat_segmetadata(const char *path,char * data_path,int *fd,int *filesize, int *mode);
+EXTERN_C int Cns_set_segmetadata_by_fd(const char *path, int fd, int size, char *physic_path, int bitmap_num);
+EXTERN_C int DLL_DECL Cns_setfile_transform_metadata(const char *filename, struct Cns_filestat fst);
+EXTERN_C int DLL_DECL Cns_get_Data_daemon(const char *path, struct Cns_filestat *filentry);
+EXTERN_C int DLL_DECL Cns_setactualpath(const char *path, char *comment);
+EXTERN_C int DLL_DECL Cns_delactualpath(const char *path);
+EXTERN_C int Cns_get_virpath(const char *actual_path, char *path);
+EXTERN_C int xrd_read(const char *path, size_t size, off_t offset, char *buff);
+EXTERN_C int xrd_open(const char *path, int flags, mode_t mode, char * actual_path);
+EXTERN_C int xrd_access(const char *path,int mask);
+EXTERN_C int xrd_getattr(const char *path, struct stat *buf);
+EXTERN_C int xrd_opendir(const char *path, int *child_dirid);
+//EXTERN_C int xrd_readdir(const char *path, char **filename, struct stat *child_stat);
+EXTERN_C int xrd_getattr_fid(int fileid, struct Cns_file_transform_stat * buf);
+EXTERN_C int xrd_readdir(const char *path, vector <string> &filename, vector <struct stat> &child_stat);
 
 EXTERN_C int DLL_DECL Cns_access _PROTO((const char *, int));
 EXTERN_C int DLL_DECL Cns_apiinit _PROTO((struct Cns_api_thread_info **));
@@ -239,4 +266,12 @@ EXTERN_C mode_t DLL_DECL Cns_umask _PROTO((mode_t));
 EXTERN_C int DLL_DECL Cns_unlink _PROTO((const char *));
 EXTERN_C int DLL_DECL Cns_utime _PROTO((const char *, struct utimbuf *));
 EXTERN_C int DLL_DECL send2nsd _PROTO((int *, char *, char *, int, char *, int));
+EXTERN_C Cns_DIR DLL_DECL *Cns_opendir_t _PROTO((const char *));
+EXTERN_C int DLL_DECL Cns_closedir_t _PROTO((Cns_DIR *));
+EXTERN_C struct dirent DLL_DECL *Cns_readdir_t _PROTO((Cns_DIR *));
+EXTERN_C struct Cns_direncomm DLL_DECL *Cns_readdirc_t _PROTO((Cns_DIR *));
+EXTERN_C struct Cns_direnstat DLL_DECL *Cns_readdirx_t _PROTO((Cns_DIR *));
+EXTERN_C struct Cns_direnstatc DLL_DECL *Cns_readdirxc_t _PROTO((Cns_DIR *));
+EXTERN_C struct Cns_direntape DLL_DECL *Cns_readdirxt_t _PROTO((Cns_DIR *));
 #endif
+

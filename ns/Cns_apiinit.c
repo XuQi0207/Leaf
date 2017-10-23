@@ -15,11 +15,11 @@ static char sccsid[] = "@(#)Cns_apiinit.c,v 1.3 2000/05/29 11:38:41 CERN IT-PDP/
 #include "Cglobals.h"
 #include "Cns_api.h"
 #include "serrno.h"
+#include<sys/stat.h>
 static int Cns_api_key = -1;
 
 int DLL_DECL
-Cns_apiinit(thip)
-struct Cns_api_thread_info **thip;
+Cns_apiinit(struct Cns_api_thread_info **thip)
 {
 	Cglobals_get (&Cns_api_key,
 	    (void **) thip, sizeof(struct Cns_api_thread_info));

@@ -22,9 +22,7 @@ static char sccsid[] = "@(#)nsdelcomment.c,v 1.1 2001/01/08 15:21:06 CERN IT-PDP
 #include "Cns_api.h"
 #include "serrno.h"
 extern	char	*getenv();
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	int errflg = 0;

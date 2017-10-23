@@ -12,38 +12,92 @@
 #include <string.h>
 #include <curl/curl.h>
 #include <json/json.h>
+#include <sys/stat.h>
 #include "Cns.h"
 #include "Cns_api.h"
 #include "serrno.h"
 #include "Cgetopt.h"
+#define DIRMAXSIZE 100
+#define ELEMENTTYPE char
 
 /*Variable declaration*/
-static char *url="http://192.168.83.218:8880/list?";
-static char *autiontic="uid=0&gid=0&path=";
+static char url[]="http://202.122.37.90:28001/list?";
+static char autiontic[]="uid=0&gid=0&path=";
 static char **filename;
 static int file_num=0;//record the order of files which are stored
 static int num_temp=0;//record the order of structs which are stored
 char temp[11][64]={0};
 char vol_name[11][64]={0};
-/*
-struct file_stat{
-int  ino;
-int  mtime;
-int  ctime;
-int  atime;
-int  nlink;
-int  uid;
-int  dev;
-int  gid;
-char path[128];
-int  size;
-int  mode;
-char filena[128];
-} *st;
-*/
-//struct Cns_file_transform_stat *st;
 struct Cns_filestat *st;
 const char *volumn[]={"ino","mtime","ctime","atime","nlink","uid","dev","gid","path","size","mode"};
+
+typedef struct Node{
+	char data[DIRMAXSIZE];
+	struct Node *next;
+}Qnode;
+typedef struct {
+	Qnode *front;
+	Qnode *rear;
+	int size;
+}Queue;
+Queue *q;
+Queue *dir_Init(){
+	Queue *q=(Queue *)malloc(sizeof(Queue));
+	q->front=NULL;
+	q->rear=NULL;
+	q->size=0;
+	return q;	
+}
+int dir_Isempty(Queue *q){
+	if(q->size==0)
+		return 1;
+	return 0;
+}
+void dir_Push(Queue *q, char *item){
+	Qnode *qnode=(Qnode *)malloc(sizeof(Qnode));
+	strcpy(qnode->data, item);
+	qnode->next=NULL;
+	if(q->front==NULL){
+		q->front=qnode;
+	}
+	if(q->rear==NULL){
+		q->rear=qnode;
+	}
+	else{
+		q->rear->next=qnode;
+		q->rear=qnode;	
+	}
+	q->size++;
+}
+void dir_Pop(Queue *q,char *item){
+	if(dir_Isempty(q)){
+		printf("queue empty\n");
+		return;
+	}
+	Qnode *temp=q->front;
+	if(q->front==q->rear){
+		q->front=NULL;
+		q->rear=NULL;
+	}
+	else{
+		q->front=q->front->next;
+	}
+	strcpy(item, temp->data);
+	q->size--;
+	free(temp);
+}
+void dir_Print(Queue *q){
+	if(dir_Isempty(q)){
+           	printf("queue empty\n");
+                return;
+        }
+	Qnode *qnode=q->front;
+	while(qnode!=NULL){
+		printf("%s\n", qnode->data);
+		qnode=qnode->next;
+	}
+
+}
 
 /*print json for test*/
 void json_print_value(json_object *obj);
@@ -190,6 +244,7 @@ static void json_object_getkey(json_object *obj){
             printf("json_object is wrong /n");
         }
     }
+	
 }
 /*read the cache file and get the columns*/
 static int process_json(void){
@@ -206,7 +261,7 @@ static int process_json(void){
     char *buf=(char *)malloc(len*sizeof(char)+1);
     fgets(buf,len+1,fp); 
 //    printf("readbufis:%s\n",buf);
-   // printf("read bufsize:%lu\n",strlen(buf));
+//    printf("read bufsize:%lu\n",strlen(buf));
     json_object *obj=json_tokener_parse(buf);
     if(is_error(obj))
         printf("is_error!\n");
@@ -214,6 +269,7 @@ static int process_json(void){
     get_filenumber(obj);
     json_object_getkey(obj);
     json_object_put(obj);
+    num_temp=0;
     fclose(fp);
     free(buf);
     remove("data.json");
@@ -291,44 +347,58 @@ int splitname(char *path, char *basename)
 	return (0);
 }
 
-/*Write the columns into DB*/
+/*Write the columns into DB & get subdir_path*/
 static int set_metadata(char *basename){
 	int i;
+	int cursubdir_num=0;
 	strcpy(filename[0], basename);
 	strcpy(st[0].name, basename);
 	for(i=0;i<file_num;i++){
-		printf_stat(i,st[i]); 
+//		printf("filename    %s   ",filename[i]);
+//		printf_stat(i,st[i]); 
 		 if(Cns_setfile_transform_metadata(filename[i],st[i])){
 			printf("usage: insert failed\n");	
 		}
-//	printf_stat(i,st[i]);	
+		if(st[i].filemode & S_IFDIR && i>0){
+			dir_Push(q, st[i].path);
+		}
 	}
+}
+
+int set_transform_filemetadata(){
+    int i;
+    char basename[21];
+    char path[100]; 
+    while(!dir_Isempty(q)){
+	    dir_Pop(q,path);
+//	printf("%s\n",path);
+	    leaf_getcurl(path);
+	    splitname(path, basename);
+	    process_json();
+	    set_metadata(basename);
+	    for(i=0;i<file_num;i++){
+     		   free(filename[i]);
+   	    }
+   	    file_num=0;
+   	    free(filename);
+            free(st);
+    }
+    return 0;
 
 }
 
 int main(int argc, char *argv[]){
-    /*if(argc<2){
+    if(argc<2){
 	printf("usage:%s file location\n",argv[0]);
 	exit(0);
     }
     if(argv[1][0]!='/'){
 	printf("usage: %s wrong loacation\n",argv[1]);
-    }
-    leaf_getcurl(argv[1]);*/
-    int i;
-    char basename[21];
-    char path[21]="/root/leaf";
-    leaf_getcurl(path);
-    splitname(path, basename);
-    printf("%s   %s\n",path,basename);
-    process_json();
-    set_metadata(basename);
-    for(i=0;i<file_num;i++){
-	free(filename[i]);
-    }
-    free(filename);
-    free(st);
+    }    
+//    char path[21]="/root/leaf";
+    q=dir_Init();
+    dir_Push(q,argv[1]); 
+    set_transform_filemetadata();
     return 0;
 }
-
 

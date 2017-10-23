@@ -22,30 +22,28 @@ static char sccsid[] = "@(#)send2nsd.c,v 1.20 2003/11/19 12:22:40 CERN IT-PDP/DM
 #include "marshall.h"
 #include "net.h"
 #include "serrno.h"
+#include "common.h"
+#include "Cns_api.h"
 
 /* send2nsd - send a request to the name server and wait for the reply */
 
-send2nsd(socketp, host, reqp, reql, user_repbuf, user_repbuf_len)
-int *socketp;
-char *host;
-char *reqp;
-int reql;
-char *user_repbuf;
-int user_repbuf_len;
+int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int user_repbuf_len)
 {
 	int actual_replen = 0;
 	int c;
 	char Cnshost[CA_MAXHOSTNAMELEN+1];
 	char func[16];
-	char *getconfent();
-	char *getenv();
 	struct hostent *hp;
 	int magic;
 	int n;
 	char *p;
-	char prtbuf[PRTBUFSZ];
+//	char prtbuf[PRTBUFSZ];
+//	char prtbuf[1024*1024+12];
+	char *prtbuf=(char *)malloc(1024*1024+1);
 	int rep_type;
-	char repbuf[REPBUFSZ];
+//	char repbuf[REPBUFSZ];
+//	char repbuf[1024*1024+12];
+	char *repbuf=(char *)malloc(1024*1024+1);
 	int s;
 	struct sockaddr_in sin; /* internet socket */
 	struct servent *sp;
@@ -77,6 +75,8 @@ int user_repbuf_len;
 		if ((hp = Cgethostbyname (Cnshost)) == NULL) {
 			Cns_errmsg (func, NS009, "Host unknown:", Cnshost);
 			serrno = SENOSHOST;
+			free(prtbuf);
+			free(repbuf);
 			return (-1);
 		}
 		sin.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
@@ -84,6 +84,9 @@ int user_repbuf_len;
 		if ((s = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
 			Cns_errmsg (func, NS002, "socket", neterror());
 			serrno = SECOMERR;
+			free(prtbuf);
+                        free(repbuf);
+
 			return (-1);
 		}
 
@@ -96,11 +99,16 @@ int user_repbuf_len;
 				Cns_errmsg (func, NS000, Cnshost);
 				(void) netclose (s);
 				serrno = ENSNACT;
+				free(prtbuf);
+                                free(repbuf);
 				return (-1);
 			} else {
 				Cns_errmsg (func, NS002, "connect", neterror());
 				(void) netclose (s);
 				serrno = SECOMERR;
+	                        free(prtbuf);
+	                        free(repbuf);
+
 				return (-1);
 			}
 		}
@@ -118,6 +126,9 @@ int user_repbuf_len;
 			Cns_errmsg (func, NS002, "send", neterror());
 		(void) netclose (s);
 		serrno = SECOMERR;
+                free(prtbuf);
+                free(repbuf);
+
 		return (-1);
 	}
 
@@ -131,14 +142,20 @@ int user_repbuf_len;
 				Cns_errmsg (func, NS002, "recv", neterror());
 			(void) netclose (s);
 			serrno = SECOMERR;
+                        free(prtbuf);
+                        free(repbuf);
+
 			return (-1);
 		}
 		p = repbuf;
 		unmarshall_LONG (p, magic) ;
 		unmarshall_LONG (p, rep_type) ;
 		unmarshall_LONG (p, c) ;
-		if (rep_type == CNS_IRC)
+		if (rep_type == CNS_IRC){
+                        free(prtbuf);
+                        free(repbuf);
 			return (0);
+                }
 		if (rep_type == CNS_RC) {
 			(void) netclose (s);
 			if (c) {
@@ -154,6 +171,9 @@ int user_repbuf_len;
 				Cns_errmsg (func, NS002, "recv", neterror());
 			(void) netclose (s);
 			serrno = SECOMERR;
+                        free(prtbuf);
+                        free(repbuf);
+
 			return (-1);
 		}
 		p = repbuf;
@@ -171,5 +191,8 @@ int user_repbuf_len;
 			}
 		}
 	}
+        free(prtbuf);
+        free(repbuf);
+
 	return (c);
 }

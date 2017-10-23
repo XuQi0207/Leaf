@@ -66,7 +66,7 @@ Cns_listclass(char *server, int flags, Cns_list *listp)
 	if (flags == CNS_LIST_BEGIN) {
 		memset (listp, 0, sizeof(Cns_list));
 		listp->fd = -1;
-		if ((listp->buf = malloc (LISTBUFSZ)) == NULL) {
+		if ((listp->buf = (char *)malloc (LISTBUFSZ)) == NULL) {
 			serrno = ENOMEM;
 			return (NULL);
 		}

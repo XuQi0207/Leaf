@@ -22,9 +22,7 @@ static char sccsid[] = "@(#)nsrename.c,v 1.4 2000/08/22 11:48:51 CERN IT-PDP/DM 
 #include "Cns_api.h"
 #include "serrno.h"
 extern	char	*getenv();
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	char newpath[CA_MAXPATHLEN+1];
 	char oldpath[CA_MAXPATHLEN+1];

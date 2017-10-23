@@ -16,9 +16,7 @@ static char sccsid[] = "@(#)nsdeleteclass.c,v 1.3 2002/08/21 09:58:21 CERN IT-PD
 #include "Cgetopt.h"
 #include "Cns_api.h"
 #include "serrno.h"
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char *argv[])
 {
 	int c;
 	int classid = 0;

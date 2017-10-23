@@ -20,6 +20,7 @@ static char sccsid[] = "@(#)Cns_closedir.c,v 1.5 2000/05/29 11:38:46 CERN IT-PDP
 #include "Cns.h"
 #include "marshall.h"
 #include "serrno.h"
+#include<unistd.h>
 
 int DLL_DECL
 Cns_closedir(Cns_DIR *dirp)

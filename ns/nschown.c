@@ -16,6 +16,8 @@ static char sccsid[] = "@(#)nschown.c,v 1.6 2001/12/19 13:04:38 CERN IT-PDP/DM J
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <ctype.h>
+#include <unistd.h>
 #if defined(_WIN32)
 #include <winsock2.h>
 #endif
@@ -28,9 +30,8 @@ extern	int	optind;
 extern char *strdup _PROTO((CONST char *));
 #endif
 int Rflag;
-main(argc, argv)
-int argc;
-char **argv;
+int chowndir (char *dir,uid_t newuid,gid_t newgid);
+int main(int argc, char **argv)
 {
 	int c;
 	char *dp;
@@ -143,10 +144,7 @@ char **argv;
 	exit (0);
 }
 
-chowndir (dir, newuid, newgid)
-char *dir;
-uid_t newuid;
-gid_t newgid;
+int chowndir (char *dir,uid_t newuid,gid_t newgid)
 {
 	int c;
 	char curdir[CA_MAXPATHLEN+1];

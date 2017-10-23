@@ -3,16 +3,15 @@
  * All rights reserved
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)Cns_main.c,v 1.35 2004/03/03 08:51:30 CERN IT-PDP/DM Jean-Philippe Baud";
-#endif /* not lint */
-
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <python3.5m/Python.h>
 #if defined(_WIN32)
 #include <winsock2.h>
 #else
@@ -31,8 +30,9 @@ static char sccsid[] = "@(#)Cns_main.c,v 1.35 2004/03/03 08:51:30 CERN IT-PDP/DM
 #include "marshall.h"
 #include "net.h"
 #include "serrno.h"
+#include "Cns_procreq.h"
+#include "client.h"
 #if !defined(linux)
-extern char *sys_errlist[];
 #endif
 
 int being_shutdown;
@@ -44,12 +44,37 @@ int jid;
 char localhost[CA_MAXHOSTNAMELEN+1];
 int maxfds;
 struct Cns_srv_thread_info Cns_srv_thread_info[CNS_NBTHREADS];
+PyThreadState * mainThreadState=NULL;
 
-Cns_main(main_args)
-struct main_args *main_args;
+int procreq(int magic,int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
+int procdirreq_t(int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
+int procdirreq(int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
+int getreq(int s,int *magic,int *req_type,char *req_data,char **clienthost);
+void *doit(void *arg);
+int Cns_main(struct main_args *main_args);
+
+void python_initialize()
+{
+        Py_Initialize();
+        if(!Py_IsInitialized())
+        {
+		exit(1);
+        }
+
+	PyEval_InitThreads();
+	if(PyEval_ThreadsInitialized()){
+		PyEval_SaveThread();
+	}
+}
+void python_destroy()
+{
+        Py_Finalize();
+}
+
+int Cns_main(struct main_args *main_args)
 {
 	int c;
-	FILE *fopen(), *cf;
+	FILE *cf;
 	char cfbuf[80];
 	struct Cns_dbfd dbfd;
 	struct Cns_file_metadata direntry;
@@ -57,7 +82,6 @@ struct main_args *main_args;
 	char domainname[CA_MAXHOSTNAMELEN+1];
 	struct sockaddr_in from;
 	int fromlen = sizeof(from);
-	char *getconfent();
 	int i;
 	int ipool;
 	int on = 1;	/* for REUSEADDR */
@@ -77,12 +101,15 @@ struct main_args *main_args;
 	nslogit (func, "started\n");
 	gethostname (localhost, CA_MAXHOSTNAMELEN+1);
 	if (strchr (localhost, '.') == NULL) {
+	/*
 		if (Cdomainname (domainname, sizeof(domainname)) < 0) {
 			nslogit (func, "Unable to get domainname\n");
 			exit (SYERR);
 		}
 		strcat (localhost, ".");
 		strcat (localhost, domainname);
+	*/
+		 exit (SYERR);
 	}
 
 	/* get login info from the name server config file */
@@ -163,7 +190,8 @@ struct main_args *main_args;
 	}
 	memset ((char *)&sin, 0, sizeof(struct sockaddr_in)) ;
 	sin.sin_family = AF_INET ;
-	if ((p = getenv ("CNS_PORT")) || (p = getconfent ("CNS", "PORT", 0))) {
+//	if ((p = getenv ("CNS_PORT")) || (p = getconfent ("CNS", "PORT", 0))) {
+	if ((p = getenv ("CNS_PORT"))) {
 		sin.sin_port = htons ((unsigned short)atoi (p));
 	} else if (sp = getservbyname ("cns", "tcp")) {
 		sin.sin_port = sp->s_port;
@@ -181,6 +209,9 @@ struct main_args *main_args;
 
 	FD_SET (s, &readmask);
 
+	python_initialize();//load python modle
+		
+	
 		/* main loop */
 
 	while (1) {
@@ -194,26 +225,31 @@ struct main_args *main_args;
 				if (Cns_srv_thread_info[i].db_open_done)
 					(void) Cns_closedb (&Cns_srv_thread_info[i].dbfd);
 			}
-			if (nb_active_threads == 0)
+			if (nb_active_threads == 0){
+				python_destroy();//release python module
 				return (0);
+			}
 		}
 		if (FD_ISSET (s, &readfd)) {
 			FD_CLR (s, &readfd);
-			rqfd = accept (s, (struct sockaddr *) &from, &fromlen);
+			rqfd = accept (s,(sockaddr*)&from,(socklen_t*)&fromlen);
 			if ((thread_index = Cpool_next_index (ipool)) < 0) {
 				nslogit (func, NS002, "Cpool_next_index",
 					sstrerror(serrno));
 				if (serrno == SEWOULDBLOCK) {
 					sendrep (rqfd, CNS_RC, serrno);
 					continue;
-				} else
+				} else{
+					python_destroy();//release python module;
 					return (SYERR);
+				}
 			}
 			Cns_srv_thread_info[thread_index].s = rqfd;
 			if (Cpool_assign (ipool, &doit,
 			    &Cns_srv_thread_info[thread_index], 1) < 0) {
 				Cns_srv_thread_info[thread_index].s = -1;
 				nslogit (func, NS002, "Cpool_assign", sstrerror(serrno));
+				python_destroy();//release python module
 				return (SYERR);
 			}
 		}
@@ -226,21 +262,21 @@ struct main_args *main_args;
 	}
 }
 
-main()
+int main()
 {
 #if ! defined(_WIN32)
  	if ((maxfds = Cinitdaemon ("nsdaemon", NULL)) < 0) 
- 		exit (SYERR);  
-	exit (Cns_main (NULL));
+ 		exit (SYERR); 
+	int i=Cns_main (NULL);
+	exit(i);
+//	exit (Cns_main (NULL));
 #else
 	if (Cinitservice ("cns", &Cns_main))
 		exit (SYERR);
 #endif
 }
 
-void *
-doit(arg)
-void *arg;
+void *doit(void *arg)
 {
 	int c;
 	char *clienthost;
@@ -260,12 +296,7 @@ void *arg;
 	return (NULL);
 }
 
-getreq(s, magic, req_type, req_data, clienthost)
-int s;
-int *magic;
-int *req_type;
-char *req_data;
-char **clienthost;
+int getreq(int s,int *magic,int *req_type,char *req_data,char **clienthost)
 {
 	struct sockaddr_in from;
 	int fromlen = sizeof(from);
@@ -293,7 +324,7 @@ char **clienthost;
 		if (being_shutdown) {
 			return (ENSNACT);
 		}
-		if (getpeername (s, (struct sockaddr *) &from, &fromlen) < 0) {
+		if (getpeername (s, (struct sockaddr *) &from, (socklen_t*)&fromlen) < 0) {
 			nslogit (func, NS002, "getpeername", neterror());
 			return (SEINTERNAL);
 		}
@@ -308,17 +339,12 @@ char **clienthost;
 		if (l > 0)
 			nslogit (func, NS004, l);
 		else if (l < 0)
-			//nslogit (func, NS002, "netread", sys_errlist[errno]);
 			nslogit (func, NS002, "netread", strerror(errno));
 		return (SEINTERNAL);
 	}
 }
 
-procdirreq(magic, req_type, req_data, clienthost, thip)
-int req_type;
-char *req_data;
-char *clienthost;
-struct Cns_srv_thread_info *thip;
+int procdirreq(int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
 {
 	int c;
 	struct Cns_class_metadata class_entry;
@@ -332,6 +358,7 @@ struct Cns_srv_thread_info *thip;
 	DBLISTPTR smdlistptr;
 	struct timeval timeval;
 	struct Cns_user_metadata umd_entry;
+	int magic;
 
 	memset (&dblistptr, 0, sizeof(DBLISTPTR));
 	if (req_type == CNS_OPENDIR) {
@@ -387,12 +414,77 @@ struct Cns_srv_thread_info *thip;
 	return (rc);
 }
 
-procreq(magic, req_type, req_data, clienthost, thip)
-int magic;
-int req_type;
-char *req_data;
-char *clienthost;
-struct Cns_srv_thread_info *thip;
+int procdirreq_t(int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
+{
+	int c;
+	struct Cns_class_metadata class_entry;
+	DBLISTPTR dblistptr;
+	int endlist = 0;
+	struct Cns_file_metadata fmd_entry;
+	int new_req_type = -1;
+	int rc = 0;
+	fd_set readfd, readmask;
+	struct Cns_seg_metadata smd_entry;
+	DBLISTPTR smdlistptr;
+	struct timeval timeval;
+	struct Cns_user_metadata umd_entry;
+	int magic;
+
+	memset (&dblistptr, 0, sizeof(DBLISTPTR));
+	if (req_type == CNS_OPENDIR_T) {
+		memset (&smdlistptr, 0, sizeof(DBLISTPTR));
+		if (c = Cns_srv_opendir_t (magic, req_data, clienthost, thip))
+			return (c);
+	} else if (req_type == CNS_LISTCLASS) {
+		if (c = Cns_srv_listclass (magic, req_data, clienthost, thip,
+		    &class_entry, endlist, &dblistptr))
+			return (c);
+	} else {
+		if (c = Cns_srv_listtape (magic, req_data, clienthost, thip,
+		    &fmd_entry, &smd_entry, endlist, &dblistptr))
+			return (c);
+	}
+	sendrep (thip->s, CNS_IRC, 0);
+
+	/* wait for readdir requests and process them */
+
+	FD_ZERO (&readmask);
+	FD_SET (thip->s, &readmask);
+	while(1){
+		if (rc = getreq (thip->s, &magic, &new_req_type, req_data, &clienthost))
+			endlist = 1;
+		if (req_type == CNS_OPENDIR_T) {
+			if (new_req_type != CNS_READDIR_T)
+				endlist = 1;
+			if (c = Cns_srv_readdir_t (magic, req_data, clienthost, thip,
+			    &fmd_entry, &smd_entry, &umd_entry,
+			    endlist, &dblistptr, &smdlistptr))
+				return (c);
+		} else if (req_type == CNS_LISTCLASS) {
+			if (new_req_type != CNS_LISTCLASS)
+				endlist = 1;
+			if (c = Cns_srv_listclass (magic, req_data, clienthost, thip,
+			    &class_entry, endlist, &dblistptr))
+				return (c);
+		} else {
+			if (new_req_type != CNS_LISTTAPE)
+				endlist = 1;
+			if (c = Cns_srv_listtape (magic, req_data, clienthost, thip,
+			    &fmd_entry, &smd_entry, endlist, &dblistptr))
+				return (c);
+		}
+		if (endlist) break;
+		sendrep (thip->s, CNS_IRC, 0);
+		memcpy (&readfd, &readmask, sizeof(readmask));
+		timeval.tv_sec = CNS_DIRTIMEOUT;
+		timeval.tv_usec = 0;
+		if (select (thip->s+1, &readfd, (fd_set *)0, (fd_set *)0, &timeval) <= 0)
+			endlist = 1;
+	}	
+	return (rc);
+}
+
+int procreq(int magic,int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
 {
 	int c;
 
@@ -404,14 +496,14 @@ struct Cns_srv_thread_info *thip;
 			sendrep (thip->s, MSG_ERR, "Cupv_seterrbuf error: %s\n",
 			    sstrerror(serrno));
 			sendrep (thip->s, CNS_RC, c);
-			return;
+			return -1;
 		}
 		if (req_type != CNS_SHUTDOWN) {
 			if (Cns_opendb (db_srvr, db_user, db_pwd, &thip->dbfd) < 0) {
 				c = serrno;
 				sendrep (thip->s, MSG_ERR, "db open error: %d\n", c);
 				sendrep (thip->s, CNS_RC, c);
-				return;
+				return -1;
 			}
 			thip->db_open_done = 1;
 		}
@@ -457,10 +549,10 @@ struct Cns_srv_thread_info *thip;
 		c = Cns_srv_getsegattrs (magic, req_data, clienthost, thip);
 		break;
 	case CNS_LISTCLASS:
-		c = procdirreq (magic, req_type, req_data, clienthost, thip);
+		c = procdirreq (req_type, req_data, clienthost, thip);
 		break;
 	case CNS_LISTTAPE:
-		c = procdirreq (magic, req_type, req_data, clienthost, thip);
+		c = procdirreq (req_type, req_data, clienthost, thip);
 		break;
 	case CNS_MKDIR:
 		c = Cns_srv_mkdir (magic, req_data, clienthost, thip);
@@ -472,7 +564,7 @@ struct Cns_srv_thread_info *thip;
 		c = Cns_srv_open (magic, req_data, clienthost, thip);
 		break;
 	case CNS_OPENDIR:
-		c = procdirreq (magic, req_type, req_data, clienthost, thip);
+		c = procdirreq (req_type, req_data, clienthost, thip);
 		break;
 	case CNS_QRYCLASS:
 		c = Cns_srv_queryclass (magic, req_data, clienthost, thip);
@@ -528,9 +620,48 @@ struct Cns_srv_thread_info *thip;
 	case CNS_SETFILETRANSFORMMETADATA:
 		c = Cns_srv_setfile_transform_metadata (magic, req_data, clienthost, thip);
 		break;
-/*	case CNS_GETDATADAEMON:
+	case CNS_GETDATADAEMON:
 		c = Cns_srv_get_Data_daemon (magic, req_data, clienthost, thip);
-		break; */
+		break;
+	case CNS_CAT:
+		c = Cns_srv_cat (magic, req_data, clienthost, thip);
+		break;
+	case CNS_SETSEG:
+		c = Cns_srv_setseg (magic, req_data, clienthost, thip);
+		break;
+	case CNS_DOWNLOAD_SEG:
+		c = Cns_srv_download_seg(magic, req_data, clienthost, thip);
+		break;
+	case CNS_OPENDIR_T:
+		c=procdirreq_t (req_type, req_data, clienthost, thip);
+		break;
+	case CNS_ACCESS_T:
+		c = Cns_srv_access_t (magic, req_data, clienthost, thip);
+		break;
+	case CNS_OPEN_T:
+		c= Cns_srv_open_t  (magic, req_data, clienthost, thip);
+		break;
+	case CNS_READ_T:
+		c = Cns_srv_read_t (magic, req_data, clienthost, thip);
+		break;
+	case CNS_CREATEFILE_T:
+		c = Cns_srv_createfile_t (magic, req_data, clienthost, thip);
+		break;
+	case CNS_GET_VIRPATH:
+		c = Cns_srv_get_virpath (magic, req_data, clienthost, thip);
+		break;
+	case CNS_TOUCH_T:
+		c = Cns_srv_touch_t (magic, req_data, clienthost, thip);
+		break;
+	case CNS_STAT_T:
+		c= Cns_srv_stat_t (magic, req_data, clienthost, thip);
+		break;
+	case CNS_OPENDIR_T_XRD:
+		c= Cns_srv_opendir_t_xrd (magic, req_data, clienthost, thip);
+		break;
+	case CNS_GETATTR_ID:
+		c=Cns_srv_getattr_id (magic, req_data, clienthost, thip);
+		break;
 	default:
 		sendrep (thip->s, MSG_ERR, NS003, req_type);
 		c = SEINTERNAL;

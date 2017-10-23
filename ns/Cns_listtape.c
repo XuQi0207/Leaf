@@ -65,7 +65,7 @@ Cns_listtape(char *server, char *vid, int flags, Cns_list *listp)
 	if (flags == CNS_LIST_BEGIN) {
 		memset (listp, 0, sizeof(Cns_list));
 		listp->fd = -1;
-		if ((listp->buf = malloc (DIRBUFSZ)) == NULL) {
+		if ((listp->buf = (char *)malloc (DIRBUFSZ)) == NULL) {
 			serrno = ENOMEM;
 			return (NULL);
 		}

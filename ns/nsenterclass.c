@@ -18,9 +18,7 @@ static char sccsid[] = "@(#)nsenterclass.c,v 1.7 2001/03/08 07:04:42 CERN IT-PDP
 #include "Cgetopt.h"
 #include "Cns_api.h"
 #include "serrno.h"
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	struct Cns_fileclass Cns_fileclass;
@@ -196,7 +194,7 @@ char **argv;
 			}
 			if (errflg) break;
 			Cns_fileclass.nbtppools = nbtppools;
-			if ((q = calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
+			if ((q =(char *) calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
 				fprintf (stderr, "nsenterclass %s: %s\n",
 				    Cns_fileclass.name, sstrerror(ENOMEM));
 				errflg++;

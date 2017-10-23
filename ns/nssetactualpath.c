@@ -24,9 +24,7 @@ static char sccsid[] = "@(#)nssetactualpath.c, 2016/08/29 09:46:30 IHCC XuQi";
 #include "Cgetopt.h"
 extern	char	*getenv();
 int cmflag;/**/
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	int errflg = 0;

@@ -24,10 +24,7 @@ static char sccsid[] = "@(#)Cns_getpath.c,v 1.2 2000/05/29 11:38:50 CERN IT-PDP/
 #include "serrno.h"
 
 int DLL_DECL
-Cns_getpath(server, fileid, path)
-char *server;
-u_signed64 fileid;
-char *path;
+Cns_getpath(char *server,u_signed64 fileid,char *path)
 {
 	int c;
 	char func[16];

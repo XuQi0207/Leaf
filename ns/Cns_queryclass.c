@@ -103,7 +103,7 @@ Cns_queryclass(char *server, int classid, char *class_name, struct Cns_fileclass
 		unmarshall_LONG (rbp, Cns_fileclass->retenp_on_disk);
 		unmarshall_LONG (rbp, Cns_fileclass->nbtppools);
 		nbtppools = Cns_fileclass->nbtppools;
-		if ((p = calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
+		if ((p = (char *)calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
 			serrno = ENOMEM;
 			return (-1);
 		}

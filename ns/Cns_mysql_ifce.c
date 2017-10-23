@@ -7,8 +7,11 @@
 static char sccsid[] = "@(#)Cns_mysql_ifce.c,v 1.7 2004/04/06 16:10:55 CERN IT-DS/HSM Jean-Philippe Baud";
 #endif /* not lint */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <mysqld_error.h>
 #include "Cns.h"
@@ -16,13 +19,14 @@ static char sccsid[] = "@(#)Cns_mysql_ifce.c,v 1.7 2004/04/06 16:10:55 CERN IT-D
 #include "serrno.h"
 #include "u64subr.h"
 #include "Cns_api.h"
-Cns_init_dbpkg()
+#include <mysql/mysql.h> 
+int Cns_init_dbpkg()
 {
 	int i;
 
 	return (0);
 }
-db_ping(struct Cns_dbfd *dbfd)
+int db_ping(struct Cns_dbfd *dbfd)
 {
 	char func[] = "db_ping";
 	int ntries = 0;
@@ -32,8 +36,7 @@ db_ping(struct Cns_dbfd *dbfd)
 	return 0;
 }
 
-Cns_abort_tr(dbfd)
-struct Cns_dbfd *dbfd;
+int Cns_abort_tr(struct Cns_dbfd *dbfd)
 {
 	mysql_ping(&dbfd->mysql);
 	(void) mysql_query (&dbfd->mysql, "ROLLBACK");
@@ -41,18 +44,13 @@ struct Cns_dbfd *dbfd;
 	return (0);
 }
 
-Cns_closedb(dbfd)
-struct Cns_dbfd *dbfd;
+int Cns_closedb(struct Cns_dbfd *dbfd)
 {
 	mysql_close (&dbfd->mysql);
 	return (0);
 }
 
-Cns_decode_class_entry(row, lock, rec_addr, class_entry)
-MYSQL_ROW row;
-int lock;
-Cns_dbrec_addr *rec_addr;
-struct Cns_class_metadata *class_entry;
+int Cns_decode_class_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_class_metadata *class_entry)
 {
 	int i = 0;
 
@@ -74,11 +72,7 @@ struct Cns_class_metadata *class_entry;
 	class_entry->retenp_on_disk = atoi (row[i]);
 }
 
-Cns_decode_fmd_entry(row, lock, rec_addr, fmd_entry)
-MYSQL_ROW row;
-int lock;
-Cns_dbrec_addr *rec_addr;
-struct Cns_file_metadata *fmd_entry;
+int Cns_decode_fmd_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata *fmd_entry)
 {
 	int i = 0;
 
@@ -99,11 +93,7 @@ struct Cns_file_metadata *fmd_entry;
 	fmd_entry->status = *row[i];
 }
 
-Cns_decode_smd_entry(row, lock, rec_addr, smd_entry)
-MYSQL_ROW row;
-int lock;
-Cns_dbrec_addr *rec_addr;
-struct Cns_seg_metadata *smd_entry;
+int Cns_decode_smd_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_seg_metadata *smd_entry)
 {
 	unsigned int blockid_tmp[4];
 	int i = 0;
@@ -141,11 +131,7 @@ struct Cns_seg_metadata *smd_entry;
     }
 }
 
-Cns_decode_tppool_entry(row, lock, rec_addr, tppool_entry)
-MYSQL_ROW row;
-int lock;
-Cns_dbrec_addr *rec_addr;
-struct Cns_tp_pool *tppool_entry;
+int Cns_decode_tppool_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_tp_pool *tppool_entry)
 {
 	int i = 0;
 
@@ -155,9 +141,7 @@ struct Cns_tp_pool *tppool_entry;
 	strcpy (tppool_entry->tape_pool, row[i]);
 }
 
-Cns_delete_class_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_class_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_class_metadata WHERE ROWID = %s";
@@ -176,9 +160,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_delete_fmd_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_fmd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_file_metadata WHERE ROWID = %s";
@@ -197,9 +179,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_delete_smd_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_smd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_seg_metadata WHERE ROWID = %s";
@@ -218,9 +198,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_delete_tppool_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_tppool_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_tp_pool WHERE ROWID = %s";
@@ -239,9 +217,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_delete_umd_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_umd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_user_metadata WHERE ROWID = %s";
@@ -260,8 +236,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_end_tr(dbfd)
-struct Cns_dbfd *dbfd;
+int Cns_end_tr(struct Cns_dbfd *dbfd)
 {
 	mysql_ping(&dbfd->mysql);
 	(void) mysql_query (&dbfd->mysql, "COMMIT");
@@ -269,11 +244,7 @@ struct Cns_dbfd *dbfd;
 	return (0);
 }
 
-Cns_exec_query(func, dbfd, sql_stmt, res)
-char *func;
-struct Cns_dbfd *dbfd;
-char *sql_stmt;
-MYSQL_RES **res;
+int Cns_exec_query(char *func,struct Cns_dbfd *dbfd,char *sql_stmt,MYSQL_RES **res)
 {
 	mysql_ping(&dbfd->mysql);
 	if (mysql_query (&dbfd->mysql, sql_stmt)) {
@@ -291,12 +262,7 @@ MYSQL_RES **res;
 	return (0);
 }
 
-Cns_get_class_by_id(dbfd, classid, class_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-int classid;
-struct Cns_class_metadata *class_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_class_by_id(struct Cns_dbfd *dbfd,int classid,struct Cns_class_metadata *class_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char func[20];
 	static char query[] =
@@ -334,12 +300,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_get_class_by_name(dbfd, class_name, class_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-char *class_name;
-struct Cns_class_metadata *class_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_class_by_name(struct Cns_dbfd *dbfd,char *class_name,struct Cns_class_metadata *class_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char func[22];
 	static char query[] =
@@ -377,12 +338,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_get_fmd_by_fileid(dbfd, fileid, fmd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-struct Cns_file_metadata *fmd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_fmd_by_fileid(struct Cns_dbfd *dbfd,u_signed64 fileid,struct Cns_file_metadata *fmd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char fileid_str[21];
 	char func[22];
@@ -418,13 +374,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_get_fmd_by_fullid(dbfd, parent_fileid, name, fmd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 parent_fileid;
-char *name;
-struct Cns_file_metadata *fmd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_fmd_by_fullid(struct Cns_dbfd *dbfd,u_signed64 parent_fileid,char *name,struct Cns_file_metadata *fmd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char escaped_name[CA_MAXNAMELEN*2+1];
 	char func[22];
@@ -465,14 +415,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_get_fmd_by_pfid(dbfd, bod, parent_fileid, fmd_entry, getattr, endlist, dblistptr)
-struct Cns_dbfd *dbfd;
-int bod;
-u_signed64 parent_fileid;
-struct Cns_file_metadata *fmd_entry;
-int getattr;
-int endlist;
-DBLISTPTR *dblistptr;
+int Cns_get_fmd_by_pfid(struct Cns_dbfd *dbfd,int bod,u_signed64 parent_fileid,struct Cns_file_metadata *fmd_entry,int getattr,int endlist,DBLISTPTR *dblistptr)
 {
 	char func[20];
 	char parent_fileid_str[21];
@@ -513,10 +456,7 @@ DBLISTPTR *dblistptr;
 	return (0);
 }
 
-Cns_get_max_copyno (dbfd, fileid, copyno)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-int *copyno;
+int Cns_get_max_copyno (struct Cns_dbfd *dbfd,u_signed64 fileid,int *copyno)
 {
 	char fileid_str[21];
 	char func[19];
@@ -543,14 +483,7 @@ int *copyno;
 	return (0);
 }
 
-Cns_get_smd_by_fullid(dbfd, fileid, copyno, fsec, smd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-int copyno;
-int fsec;
-struct Cns_seg_metadata *smd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_smd_by_fullid(struct Cns_dbfd *dbfd,u_signed64 fileid,int copyno,int fsec,struct Cns_seg_metadata *smd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char fileid_str[21];
 	char func[22];
@@ -588,15 +521,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_get_smd_by_pfid(dbfd, bof, fileid, smd_entry, lock, rec_addr, endlist, dblistptr)
-struct Cns_dbfd *dbfd;
-int bof;
-u_signed64 fileid;
-struct Cns_seg_metadata *smd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
-int endlist;
-DBLISTPTR *dblistptr;
+int Cns_get_smd_by_pfid(struct Cns_dbfd *dbfd,int bof,u_signed64 fileid,struct Cns_seg_metadata *smd_entry,int lock,Cns_dbrec_addr *rec_addr,int endlist,DBLISTPTR *dblistptr)
 {
 	char fileid_str[21];
 	char func[20];
@@ -638,13 +563,7 @@ DBLISTPTR *dblistptr;
 	return (0);
 }
 
-Cns_get_smd_by_vid(dbfd, bov, vid, smd_entry, endlist, dblistptr)
-struct Cns_dbfd *dbfd;
-int bov;
-char *vid;
-struct Cns_seg_metadata *smd_entry;
-int endlist;
-DBLISTPTR *dblistptr;
+int Cns_get_smd_by_vid(struct Cns_dbfd *dbfd,int bov,char *vid,struct Cns_seg_metadata *smd_entry,int endlist,DBLISTPTR *dblistptr)
 {
 	char func[19];
 	static char query[] =
@@ -674,15 +593,7 @@ DBLISTPTR *dblistptr;
 	return (0);
 }
 
-Cns_get_tppool_by_cid(dbfd, bol, classid, tppool_entry, lock, rec_addr, endlist, dblistptr)
-struct Cns_dbfd *dbfd;
-int bol;
-int classid;
-struct Cns_tp_pool *tppool_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
-int endlist;
-DBLISTPTR *dblistptr;
+int Cns_get_tppool_by_cid(struct Cns_dbfd *dbfd,int bol,int classid,struct Cns_tp_pool *tppool_entry,int lock,Cns_dbrec_addr *rec_addr,int endlist,DBLISTPTR *dblistptr)
 {
 	char func[22];
 	static char query[] =
@@ -716,12 +627,7 @@ DBLISTPTR *dblistptr;
 	return (0);
 }
 
-Cns_get_umd_by_fileid(dbfd, fileid, umd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-struct Cns_user_metadata *umd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_umd_by_fileid(struct Cns_dbfd *dbfd,u_signed64 fileid,struct Cns_user_metadata *umd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char fileid_str[21];
 	char func[22];
@@ -758,9 +664,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_insert_class_entry(dbfd, class_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_class_metadata *class_entry;
+int Cns_insert_class_entry(struct Cns_dbfd *dbfd,struct Cns_class_metadata *class_entry)
 {
 	char func[23];
 	static char insert_stmt[] =
@@ -797,9 +701,7 @@ struct Cns_class_metadata *class_entry;
 	return (0);
 }
 
-Cns_insert_fmd_entry(dbfd, fmd_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_file_metadata *fmd_entry;
+int Cns_insert_fmd_entry(struct Cns_dbfd *dbfd,struct Cns_file_metadata *fmd_entry)
 {
 	char escaped_name[CA_MAXNAMELEN*2+1];
 	char fileid_str[21];
@@ -839,9 +741,7 @@ struct Cns_file_metadata *fmd_entry;
 	return (0);
 }
 
-Cns_insert_smd_entry(dbfd, smd_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_seg_metadata *smd_entry;
+int Cns_insert_smd_entry(struct Cns_dbfd *dbfd,struct Cns_seg_metadata *smd_entry)
 {
 	char fileid_str[21];
 	char func[21];
@@ -880,9 +780,7 @@ struct Cns_seg_metadata *smd_entry;
 	return (0);
 }
 
-Cns_insert_tppool_entry(dbfd, tppool_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_tp_pool *tppool_entry;
+int Cns_insert_tppool_entry(struct Cns_dbfd *dbfd,struct Cns_tp_pool *tppool_entry)
 {
 	char func[24];
 	static char insert_stmt[] =
@@ -909,9 +807,7 @@ struct Cns_tp_pool *tppool_entry;
 	return (0);
 }
 
-Cns_insert_umd_entry(dbfd, umd_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_user_metadata *umd_entry;
+int Cns_insert_umd_entry(struct Cns_dbfd *dbfd,struct Cns_user_metadata *umd_entry)
 {
 	char fileid_str[21];
 	char func[21];
@@ -940,12 +836,7 @@ struct Cns_user_metadata *umd_entry;
 	return (0);
 }
 
-Cns_list_class_entry(dbfd, bol, class_entry, endlist, dblistptr)
-struct Cns_dbfd *dbfd;
-int bol;
-struct Cns_class_metadata *class_entry;
-int endlist;
-DBLISTPTR *dblistptr;
+int Cns_list_class_entry(struct Cns_dbfd *dbfd,int bol,struct Cns_class_metadata *class_entry,int endlist,DBLISTPTR *dblistptr)
 {
 	char func[21];
 	static char query[] =
@@ -977,11 +868,7 @@ DBLISTPTR *dblistptr;
 	return (0);
 }
 
-Cns_opendb(db_srvr, db_user, db_pwd, dbfd)
-char *db_srvr;
-char *db_user;
-char *db_pwd;
-struct Cns_dbfd *dbfd;
+int Cns_opendb(char *db_srvr,char *db_user,char *db_pwd,struct Cns_dbfd *dbfd)
 {
 	char func[16];
 	int ntries;
@@ -1003,9 +890,7 @@ struct Cns_dbfd *dbfd;
 	return (-1);
 }
 
-Cns_start_tr(s, dbfd)
-int s;
-struct Cns_dbfd *dbfd;
+int Cns_start_tr(int s,struct Cns_dbfd *dbfd)
 {	
 	mysql_ping(&dbfd->mysql);
 	(void) mysql_query (&dbfd->mysql, "BEGIN");
@@ -1013,9 +898,7 @@ struct Cns_dbfd *dbfd;
 	return (0);
 }
 
-Cns_unique_id(dbfd, unique_id)
-struct Cns_dbfd *dbfd;
-u_signed64 *unique_id;
+int Cns_unique_id(struct Cns_dbfd *dbfd,u_signed64 *unique_id)
 {
 	char func[16];
 	static char insert_stmt[] =
@@ -1058,10 +941,7 @@ u_signed64 *unique_id;
 	return (0);
 }
 
-Cns_update_class_entry(dbfd, rec_addr, class_entry)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
-struct Cns_class_metadata *class_entry;
+int Cns_update_class_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_class_metadata *class_entry)
 {
 	char func[23];
 	char sql_stmt[1024];
@@ -1093,10 +973,7 @@ struct Cns_class_metadata *class_entry;
 	return (0);
 }
 
-Cns_update_fmd_entry(dbfd, rec_addr, fmd_entry)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
-struct Cns_file_metadata *fmd_entry;
+int Cns_update_fmd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata *fmd_entry)
 {
 	char escaped_name[CA_MAXNAMELEN*2+1];
 	char filesize_str[21];
@@ -1130,10 +1007,7 @@ struct Cns_file_metadata *fmd_entry;
 	return (0);
 }
 
-Cns_update_smd_entry(dbfd, rec_addr, smd_entry)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
-struct Cns_seg_metadata *smd_entry;
+int Cns_update_smd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_seg_metadata *smd_entry)
 {
 	char func[21];
 	char segsize_str[21];
@@ -1164,10 +1038,7 @@ struct Cns_seg_metadata *smd_entry;
 	return (0);
 }
 
-Cns_update_umd_entry(dbfd, rec_addr, umd_entry)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
-struct Cns_user_metadata *umd_entry;
+int Cns_update_umd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_user_metadata *umd_entry)
 {
 	char func[21];
 	char sql_stmt[1024];
@@ -1191,9 +1062,7 @@ struct Cns_user_metadata *umd_entry;
 
 
 /*new founction--MIlo*/
-Cns_delete_fap_entry(dbfd, rec_addr)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
+int Cns_delete_fap_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr)
 {
 	static char delete_stmt[] =
 		"DELETE FROM Cns_file_actualpath WHERE ROWID = %s";
@@ -1212,9 +1081,7 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_insert_fap_entry(dbfd, umd_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_user_metadata *umd_entry;
+int Cns_insert_fap_entry(struct Cns_dbfd *dbfd,struct Cns_user_metadata *umd_entry)
 {
 	char fileid_str[21];
 	char func[21];
@@ -1243,10 +1110,7 @@ struct Cns_user_metadata *umd_entry;
 	return (0);
 }
 
-Cns_update_fap_entry(dbfd, rec_addr, umd_entry)
-struct Cns_dbfd *dbfd;
-Cns_dbrec_addr *rec_addr;
-struct Cns_user_metadata *umd_entry;
+int Cns_update_fap_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_user_metadata *umd_entry)
 {
 	char func[21];
 	char sql_stmt[1024];
@@ -1268,12 +1132,7 @@ struct Cns_user_metadata *umd_entry;
 	return (0);
 }
 
-Cns_get_fap_by_fileid(dbfd, fileid, umd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-struct Cns_user_metadata *umd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_fap_by_fileid(struct Cns_dbfd *dbfd,u_signed64 fileid,struct Cns_user_metadata *umd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char fileid_str[21];
 	char func[22];
@@ -1310,56 +1169,46 @@ Cns_dbrec_addr *rec_addr;
 	return (0);
 }
 
-Cns_decode_ftmd_entry(row, lock, rec_addr, ftmd_entry)
-MYSQL_ROW row;
-int lock;
-Cns_dbrec_addr *rec_addr;
-struct Cns_file_transform_stat *ftmd_entry;
+int Cns_decode_ftmd_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata  *ftmd_entry)
 {
 	int i=0;
 	if(lock)
 		strcpy(*rec_addr, row[i++]);
 	ftmd_entry->fileid = strtou64(row[i++]);
 	ftmd_entry->parent_fileid = strtou64(row[i++]);
-	strcpy(ftmd_entry->filena, row[i++]);
-	ftmd_entry->mode = atoi(row[i++]);
-	ftmd_entry->dev = atoi(row[i++]);
+	strcpy(ftmd_entry->name, row[i++]);
 	strcpy(ftmd_entry->path, row[i++]);
-	ftmd_entry->ino = atoi(row[i++]);
+	ftmd_entry->filemode = atoi(row[i++]);
 	ftmd_entry->nlink = atoi(row[i++]);
+	ftmd_entry->dev = atoi(row[i++]);
+	ftmd_entry->ino = atoi(row[i++]);
 	ftmd_entry->uid = atoi(row[i++]);
 	ftmd_entry->gid = atoi(row[i++]);
-	ftmd_entry->size = atoi(row[i++]);
+	ftmd_entry->filesize = atoi(row[i++]);
 	ftmd_entry->atime = atoi(row[i++]);
 	ftmd_entry->mtime = atoi(row[i++]);
 	ftmd_entry->ctime = atoi(row[i++]);
 	ftmd_entry->fileclass = atoi(row[i++]);
 	ftmd_entry->status = *row[i++];
-	strcpy(ftmd_entry->bitmap, row[i]);
+//	strcpy(ftmd_entry->bitmap, row[i]);
 }
 
-Cns_get_ftmd_by_fullpath(dbfd, path, name, fmd_entry, lock, rec_addr)
-struct Cns_dbfd *dbfd;
-char *path;
-char *name;
-struct Cns_file_metadata *fmd_entry;
-int lock;
-Cns_dbrec_addr *rec_addr;
+int Cns_get_ftmd_by_fullpath(struct Cns_dbfd *dbfd,char *path,char *name,struct Cns_file_metadata *fmd_entry,int lock,Cns_dbrec_addr *rec_addr)
 {
 	char escaped_name[CA_MAXNAMELEN*2+1];
 	char func[22];
 	char parent_fileid_str[21];
 	static char query[] =
 		"SELECT \
-		 FILEID, PARENT_FILEID, NAME, FILEMODE, NLINK, OWNER_UID, GID, \
-		 FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS \
+		 FILEID, PARENT_FILEID, NAME, PATH, FILEMODE, NLINK, DEV, INO, OWNER_UID, GID, \
+		 FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS, BITMAP \
 		FROM Cns_file_transform_metadata \
 		WHERE path = '%s' \
 		AND name = '%s'";
 	static char query4upd[] =
-		"SELECT ROWID, \
-		 FILEID, PARENT_FILEID, NAME, FILEMODE, NLINK, OWNER_UID, GID, \
-		 FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS \
+		"SELECT \
+		FILEID, PARENT_FILEID, FILEMODE, NLINK, DEV, INO, OWNER_UID, GID, \
+		FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS, BITMAP \
 		FROM Cns_file_transform_metadata \
 		WHERE path = '%s' \
 		AND name = '%s' \
@@ -1379,13 +1228,11 @@ Cns_dbrec_addr *rec_addr;
 		serrno = ENOENT;
 		return (-1);
 	}
-	Cns_decode_fmd_entry (row, lock, rec_addr, fmd_entry);
+	Cns_decode_ftmd_entry (row, lock, rec_addr, fmd_entry);
 	mysql_free_result (res);
 	return (0);
 }
-Cns_insert_ftmd_entry(dbfd, fmd_entry)
-struct Cns_dbfd *dbfd;
-struct Cns_file_metadata *fmd_entry;
+int Cns_insert_ftmd_entry(struct Cns_dbfd *dbfd,struct Cns_file_metadata *fmd_entry)
 {
         char escaped_name[CA_MAXNAMELEN*2+1];
         char fileid_str[21];
@@ -1426,9 +1273,7 @@ struct Cns_file_metadata *fmd_entry;
 }
 
 
-Cns_unique_transform_id(dbfd, unique_id)
-struct Cns_dbfd *dbfd;
-u_signed64 *unique_id;
+int Cns_unique_transform_id(struct Cns_dbfd *dbfd,u_signed64 *unique_id)
 {
         char func[16];
         static char insert_stmt[] =
@@ -1471,4 +1316,351 @@ u_signed64 *unique_id;
         return (0);
 }
 
+int Cns_get_ftmd_by_pfid(struct Cns_dbfd *dbfd,int bod,u_signed64 parent_fileid,struct Cns_file_metadata *fmd_entry,int getattr,int endlist,DBLISTPTR *dblistptr)
+{
+	char func[20];
+	char parent_fileid_str[21];
+	static char query[] =
+		"SELECT \
+		 FILEID, PARENT_FILEID, NAME, PATH, FILEMODE, NLINK, DEV, INO, OWNER_UID, GID, \
+		 FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS \
+		FROM Cns_file_transform_metadata \
+		WHERE parent_fileid = %s \
+		ORDER BY name";
+	static char query_name[] =
+		"SELECT \
+		 NAME \
+		FROM Cns_file_transform_metadata \
+		WHERE parent_fileid = %s \
+		ORDER BY name";
+	MYSQL_ROW row;
+	char sql_stmt[1024];
 
+	strcpy (func, "Cns_get_fmd_by_pfid");
+	if (endlist) {
+		if (*dblistptr)
+			mysql_free_result (*dblistptr);
+		return (1);
+	}
+	if (bod) {
+		sprintf (sql_stmt, getattr ? query : query_name,
+		    u64tostr (parent_fileid, parent_fileid_str, -1));
+		if (Cns_exec_query (func, dbfd, sql_stmt, dblistptr))
+			return (-1);
+	}
+	if ((row = mysql_fetch_row (*dblistptr)) == NULL)
+		return (1);
+	if (! getattr)
+		strcpy (fmd_entry->name, row[0]);
+	else
+		Cns_decode_ftmd_entry (row, 0, NULL, fmd_entry);
+	return (0);
+}
+
+
+int Cns_update_ftmd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata *fmd_entry)
+{
+        char escaped_name[CA_MAXNAMELEN*2+1];
+        char filesize_str[21];
+        char func[21];
+        char parent_fileid_str[21];
+        char sql_stmt[1024];
+        static char update_stmt[] =
+                "UPDATE Cns_file_transform_metadata SET \
+                 FILEMODE = %d, NLINK = %d, DEV = %d, INO = %d,\
+                OWNER_UID = %d, GID = %d, FILESIZE = %s, ATIME = %d, \
+                MTIME = %d, CTIME = %d, FILECLASS = %d, STATUS = '%c' \
+                WHERE FILEID = %d";
+
+        strcpy (func, "Cns_update_ftmd_entry");
+        mysql_real_escape_string (&dbfd->mysql, escaped_name, fmd_entry->name,
+            strlen (fmd_entry->name));
+        sprintf (sql_stmt, update_stmt,
+            fmd_entry->filemode, fmd_entry->nlink,fmd_entry->dev,fmd_entry->ino, 
+            fmd_entry->uid, fmd_entry->gid,
+            u64tostr (fmd_entry->filesize, filesize_str, -1),
+            fmd_entry->atime, fmd_entry->mtime, fmd_entry->ctime,
+            fmd_entry->fileclass, fmd_entry->status, fmd_entry->fileid);
+        mysql_ping(&dbfd->mysql);
+        if (mysql_query (&dbfd->mysql, sql_stmt)) {
+                nslogit (func, "UPDATE error: %s\n",
+                    mysql_error (&dbfd->mysql));
+                serrno = SEINTERNAL;
+                return (-1);
+        }
+        return (0);
+}
+int Cns_get_t_filemeta(struct Cns_dbfd *dbfd,char *path,char *basename,int *fd,int *filesize,int *mode)
+{
+	char func[22];
+	static char query[] =
+		"SELECT \
+		 FILEID, FILESIZE, FILEMODE \
+		FROM Cns_file_transform_metadata \
+		WHERE name ='%s' and path= '%s'";
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+	char sql_stmt[1024];
+	strcpy (func, "Cns_cat_by_path");
+	*fd=-1;
+	sprintf (sql_stmt, query, basename, path);
+
+        if (mysql_query (&dbfd->mysql, sql_stmt)) {
+                if (mysql_errno (&dbfd->mysql) == ER_DUP_ENTRY)
+                        serrno = EEXIST;
+                else {
+                        nslogit (func, "SELECT error: %s\n",
+                            mysql_error (&dbfd->mysql));
+                        serrno = SEINTERNAL;
+                }
+                return (-1);
+        }
+        if((res=mysql_store_result(&dbfd->mysql))==NULL)
+        {
+                nslogit (func, "mysql_store_res error: %s\n",
+                mysql_error (&dbfd->mysql));
+                serrno = SEINTERNAL;
+                return -1;
+        }
+
+	
+	if ((row = mysql_fetch_row (res)) == NULL) {
+		mysql_free_result (res);
+		serrno = ENOENT;
+		return (-1);
+	}
+	sscanf(row[0],"%d",fd);
+	sscanf(row[1],"%d",filesize);
+	sscanf(row[2],"%d",mode);
+	mysql_free_result (res);
+	return (0);
+}
+int Cns_get_t_filepath(struct Cns_dbfd *dbfd,int fd,char *actual_path)
+{
+	char func[22];
+        static char query[]="SELECT PATH FROM Cns_seg_transform_metadata WHERE FD = %d";
+        MYSQL_RES *res;
+        MYSQL_ROW row;
+        char sql_stmt[1024];
+        strcpy (func, "Cns_cat_by_path");
+        sprintf(sql_stmt, query, fd);
+
+        if (mysql_query (&dbfd->mysql, sql_stmt)) {
+                if (mysql_errno (&dbfd->mysql) == ER_DUP_ENTRY)
+                        serrno = EEXIST;
+                else {
+                        nslogit (func, "INSERT error: %s\n",
+                            mysql_error (&dbfd->mysql));
+                        serrno = SEINTERNAL;
+                }
+                return (-1);
+        }
+        if((res=mysql_store_result(&dbfd->mysql))==NULL)
+	{
+		nslogit (func, "mysql_store_res error: %s\n",
+		mysql_error (&dbfd->mysql));
+		serrno = SEINTERNAL;
+		return -1;
+	}
+	if ((row = mysql_fetch_row (res)) == NULL) {
+                strcpy(actual_path,"FDNDY");
+        }else
+                strcpy(actual_path,row[0]);
+        mysql_free_result (res);
+	return 0;
+}
+int Cns_set_t_segmeta(struct Cns_dbfd *dbfd,char *path,char *basename,int fd,int size,char *physic_path)
+{
+	char func[21];
+	static char insert_stmt[]=
+		"INSERT INTO Cns_seg_transform_metadata\
+		(FD, seg_size, path)\
+		VALUES\
+		( %d, %d, '%s')";
+	char sql_stmt[1024];
+	strcpy(func,"Cns_set_segmetadata");
+	sprintf(sql_stmt,insert_stmt,fd,size,physic_path);
+	if(mysql_ping(&dbfd->mysql)!=0){
+		printf("sql_connect down\n ");
+	}
+	if (mysql_query (&dbfd->mysql, sql_stmt)) {
+		if (mysql_errno (&dbfd->mysql) == ER_DUP_ENTRY)
+			serrno = EEXIST;
+		else {
+			nslogit (func, "INSERT error: %s\n",
+			    mysql_error (&dbfd->mysql));
+			serrno = SEINTERNAL;
+		}
+		return (-1);
+	}
+	return (0);
+}
+int Cns_set_t_filebitmap(struct Cns_dbfd *dbfd,char *path,char *basename,char* bitmap)
+{
+        char func[21];
+        static char insert_stmt[]=
+                "UPDATE Cns_file_transform_metadata\
+                SET bitmap='%s'\
+                WHERE path='%s' AND name='%s'";
+        char sql_stmt[1024];
+        strcpy(func,"Cns_set_segmetadata");
+        sprintf(sql_stmt,insert_stmt,bitmap,path,basename);
+        if(mysql_ping(&dbfd->mysql)!=0){
+                printf("sql_connect down\n ");
+        }
+        if (mysql_query (&dbfd->mysql, sql_stmt)) {
+                if (mysql_errno (&dbfd->mysql) == ER_DUP_ENTRY)
+                        serrno = EEXIST;
+                else {
+                        nslogit (func, "INSERT error: %s\n",
+                            mysql_error (&dbfd->mysql));
+                        serrno = SEINTERNAL;
+                }
+                return (-1);
+        }
+        return (0);
+
+}
+
+int Cns_get_bitmap(struct Cns_dbfd *dbfd,char *path,char *basename,char *bitmap)
+{
+        MYSQL_ROW row;
+        MYSQL_RES *res;
+	char func[21];
+        static char check[]="select bitmap from Cns_file_transform_metadata where path='%s' and name='%s'";
+        char sql_check[1024];
+
+        strcpy(func,"Cns_get_bitmap");
+        sprintf(sql_check,check,path,basename);
+        if (Cns_exec_query (func, dbfd, sql_check, &res))
+                return (-1);
+
+        if ((row = mysql_fetch_row (res)) == NULL) {
+                mysql_free_result (res);
+                serrno = ENOENT;
+                return (-1);
+        }
+	strcpy(bitmap,row[0]);
+        mysql_free_result (res);
+        return (0);		
+}
+ 
+int Cns_get_fd_by_actualpath(struct Cns_dbfd *dbfd, char *path, int *fd)
+{
+        MYSQL_ROW row;
+        MYSQL_RES *res;
+        char func[21];
+        static char check[]="select FD from Cns_seg_transform_metadata where path='%s'";
+        char sql_check[1024];
+
+        strcpy(func,"Cns_get_fd_by_actualpath");
+        sprintf(sql_check,check,path);
+        if (Cns_exec_query (func, dbfd, sql_check, &res))
+                return (-1);
+
+        if ((row = mysql_fetch_row (res)) == NULL) {
+                mysql_free_result (res);
+                serrno = ENOENT;
+                return (-1);
+        }
+        sscanf(row[0],"%d",fd);
+        mysql_free_result (res);
+        return (0);
+}
+int Cns_get_path_by_fd(struct Cns_dbfd *dbfd, int fd, char * path,char *name)
+{
+        MYSQL_ROW row;
+        MYSQL_RES *res;
+        char func[21]; 
+        static char check[]="select path, name from Cns_file_transform_metadata where fileid=%d";
+        char sql_check[1024];
+
+        strcpy(func,"Cns_get_path_by_fd");
+        sprintf(sql_check, check, fd);
+        if (Cns_exec_query (func, dbfd, sql_check, &res))
+                return (-1);
+
+        if ((row = mysql_fetch_row (res)) == NULL) {
+                mysql_free_result (res);
+                serrno = ENOENT;
+                return (-1);
+        }
+        strcpy(path,row[0]);
+	strcpy(name,row[1]);
+	
+        mysql_free_result (res);
+        return (0);
+
+}
+int Cns_get_fileid_by_fullpath(struct Cns_dbfd *dbfd, char *path, char *filename, int *id)
+{
+	MYSQL_ROW row;
+	MYSQL_RES *res;
+	char func[21];
+	static char check[]="select fileid from Cns_file_transform_metadata where path='%s' and name='%s'";
+	char sql_check[1024];
+	strcpy(func,"Cns_get_fileid_by_fullpath");
+	sprintf(sql_check, check, path, filename);
+	if (Cns_exec_query (func, dbfd, sql_check, &res))
+		return (-1);
+	if ((row = mysql_fetch_row (res)) == NULL) {
+		mysql_free_result (res);
+		serrno = ENOENT;
+		return (-1);
+	}
+	sscanf(row[0],"%d",id);
+	mysql_free_result (res);
+	return (0);
+		
+}
+int Cns_get_dirlist_by_parent_fileid(struct Cns_dbfd *dbfd, int id, char *dirlist)
+{
+	MYSQL_ROW row;
+	MYSQL_RES *res;
+	int i=0;
+	char func[21];
+	static char check[]="select fileid from Cns_file_transform_metadata where parent_fileid=%d";
+	char sql_check[1024];
+	strcpy(func,"Cns_get_dirlist_by_parent_fileid");
+	sprintf(sql_check, check, id);
+	if (Cns_exec_query (func, dbfd, sql_check, &res))
+		return -1;
+	if ((row = mysql_fetch_row (res)) == NULL) {
+		mysql_free_result (res);
+		serrno = ENOENT;
+		return -1;
+	}
+	sprintf(dirlist,row[0]);
+	while(row = mysql_fetch_row (res)){
+		strcat(dirlist, ",");
+		strcat(dirlist,row[0]);
+	}		
+	mysql_free_result (res);
+	return (0);	
+}
+int Cns_get_ftmd_by_fileid(struct Cns_dbfd *dbfd, int id, struct Cns_file_metadata *fmd_entry)
+{
+        char func[22];
+        static char query[] =
+                "SELECT \
+                 FILEID, PARENT_FILEID, NAME, PATH, FILEMODE, NLINK, DEV, INO, OWNER_UID, GID, \
+                 FILESIZE, ATIME, MTIME, CTIME, FILECLASS, STATUS, BITMAP \
+                FROM Cns_file_transform_metadata \
+                WHERE FILEID = %d";
+        MYSQL_RES *res;
+        MYSQL_ROW row;
+        char sql_stmt[1024];
+
+        strcpy (func, "Cns_get_ftmd_by_fileid");
+        sprintf (sql_stmt,  query, id);
+        if (Cns_exec_query (func, dbfd, sql_stmt, &res))
+                return (-1);
+        if ((row = mysql_fetch_row (res)) == NULL) {
+                mysql_free_result (res);
+                serrno = ENOENT;
+                return (-1);
+        }
+      	Cns_decode_ftmd_entry (row, 0, NULL, fmd_entry);
+        mysql_free_result (res);
+	return 0;
+}

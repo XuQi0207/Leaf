@@ -39,7 +39,6 @@ Cns_setfile_transform_metadata(const char *filename, struct Cns_filestat fst)
 	if (Cns_apiinit (&thip))
 		return (-1);
 	/*get the user info*/
-	/*
 	uid = geteuid();
 	gid = getegid();
 #if defined(_WIN32)
@@ -49,7 +48,7 @@ Cns_setfile_transform_metadata(const char *filename, struct Cns_filestat fst)
 		return (-1);
 	}
 #endif
-	*/
+	
 	if (! filename || ! (&fst)) {
 		serrno = EFAULT;
 		return (-1);

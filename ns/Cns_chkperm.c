@@ -22,13 +22,7 @@ extern char localhost[CA_MAXHOSTNAMELEN+1];
 
 /*	Cns_chkbackperm - check permissions backward */
 
-Cns_chkbackperm(dbfd, fileid, mode, uid, gid, clienthost)
-struct Cns_dbfd *dbfd;
-u_signed64 fileid;
-int mode;
-uid_t uid;
-gid_t gid;
-char *clienthost;
+int Cns_chkbackperm(struct Cns_dbfd *dbfd,u_signed64 fileid,int mode,uid_t uid,gid_t gid,char *clienthost)
 {
 	u_signed64 cur_fileid = fileid;
 	struct Cns_file_metadata fmd_entry;
@@ -52,16 +46,7 @@ char *clienthost;
 
 /*	Cns_chkdirperm - check permissions in all components of a given directory */
 
-Cns_chkdirperm(dbfd, cwd, dir, mode, uid, gid, clienthost, dir_entry, rec_addr)
-struct Cns_dbfd *dbfd;
-u_signed64 cwd;
-char *dir;
-int mode;
-uid_t uid;
-gid_t gid;
-char *clienthost;
-struct Cns_file_metadata *dir_entry;
-Cns_dbrec_addr *rec_addr;
+int Cns_chkdirperm(struct Cns_dbfd *dbfd,u_signed64 cwd,char *dir,int mode,uid_t uid,gid_t gid,char *clienthost,struct Cns_file_metadata *dir_entry,Cns_dbrec_addr *rec_addr)
 {
 	int c;
 	char *component;
@@ -144,12 +129,7 @@ Cns_dbrec_addr *rec_addr;
 
 /*	Cns_chkentryperm - check permissions in a given directory component */
 
-Cns_chkentryperm(fmd_entry, mode, uid, gid, clienthost)
-struct Cns_file_metadata *fmd_entry;
-int mode;
-uid_t uid;
-gid_t gid;
-char *clienthost;
+int Cns_chkentryperm(struct Cns_file_metadata *fmd_entry,int mode,uid_t uid,gid_t gid,char *clienthost)
 {
 	if (fmd_entry->uid != uid) {
 		mode >>= 3;
@@ -171,10 +151,7 @@ char *clienthost;
  *	"abc"	-->	path = "", basename = "abc"
  */
 
-Cns_splitname(cwd, path, basename)
-u_signed64 cwd;
-char *path;
-char *basename;
+int Cns_splitname(u_signed64 cwd,char *path,char *basename)
 {
 	char *p;
 

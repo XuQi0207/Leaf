@@ -107,7 +107,7 @@ Cns_getsegattrs(const char *path, struct Cns_fileid *file_uniqueid, int *nbseg, 
 			*segattrs = NULL;
 			return (0);
 		}
-		segments = malloc (*nbseg * sizeof(struct Cns_segattrs));
+		segments = (struct Cns_segattrs *)malloc (*nbseg * sizeof(struct Cns_segattrs));
 		if (segments == NULL) {
 			serrno = ENOMEM;
 			return (-1);

@@ -27,9 +27,7 @@ static char sccsid[] = "@(#)nsmkdir.c,v 1.8 2003/07/21 13:26:12 CERN IT-PDP/DM J
 extern	char	*getenv();
 extern	char	*optarg;
 extern	int	optind;
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc,char ** argv)
 {
 	int c;
 	char Cnsdir[CA_MAXPATHLEN+1];

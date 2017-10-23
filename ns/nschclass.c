@@ -16,6 +16,9 @@ static char sccsid[] = "@(#)nschclass.c,v 1.7 2003/11/14 06:36:06 CERN IT-PDP/DM
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include<unistd.h>
+#include<ctype.h>
+
 #if defined(_WIN32)
 #include <winsock2.h>
 #endif
@@ -30,9 +33,11 @@ extern char *strdup _PROTO((CONST char *));
 int errflg;
 int iflag;
 int rflag;
-main(argc, argv)
-int argc;
-char **argv;
+
+int isyes();
+int chdirclass (char *dir,int oldclass,int newclass,char *newclass_name);
+
+int main(int argc, char **argv)
 {
 	int c;
 	char *dp;
@@ -121,7 +126,7 @@ char **argv;
 	exit (0);
 }
 
-isyes()
+int isyes()
 {
 	int c;
 	int fchar;
@@ -132,11 +137,7 @@ isyes()
 	return (fchar == 'y');
 }
 
-chdirclass (dir, oldclass, newclass, newclass_name)
-char *dir;
-int oldclass;
-int newclass;
-char *newclass_name;
+int chdirclass (char *dir,int oldclass,int newclass,char *newclass_name)
 {
 	int c;
 	int classtobechanged;

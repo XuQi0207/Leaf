@@ -168,6 +168,11 @@ struct Cns_user_metadata {
 
 			/* name server function prototypes */
 
+int Cns_init_dbpkg();
+int Cns_start_tr(int s,struct Cns_dbfd *dbfd);
+int Cns_abort_tr(struct Cns_dbfd *dbfd);
+int Cns_end_tr(struct Cns_dbfd *dbfd);
+int sendrep(int rpfd, int rep_type, ...);
 EXTERN_C int Cns_chkbackperm _PROTO((struct Cns_dbfd *, u_signed64, int, uid_t, gid_t, char *));
 EXTERN_C int Cns_chkdirperm _PROTO((struct Cns_dbfd *, u_signed64, char *, int, uid_t, gid_t, char *, struct Cns_file_metadata *, Cns_dbrec_addr *));
 EXTERN_C int Cns_chkentryperm _PROTO((struct Cns_file_metadata *, int, uid_t, gid_t, char *));
@@ -202,4 +207,27 @@ EXTERN_C int Cns_update_class_entry _PROTO((struct Cns_dbfd *, Cns_dbrec_addr *,
 EXTERN_C int Cns_update_fmd_entry _PROTO((struct Cns_dbfd *, Cns_dbrec_addr *, struct Cns_file_metadata *));
 EXTERN_C int Cns_update_smd_entry _PROTO((struct Cns_dbfd *, Cns_dbrec_addr *, struct Cns_seg_metadata *));
 EXTERN_C int Cns_update_umd_entry _PROTO((struct Cns_dbfd *, Cns_dbrec_addr *, struct Cns_user_metadata *));
+int nslogit(char *func, char *msg, ...);
+
+/*new founction--MIlo*/
+int Cns_delete_fap_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr);
+int Cns_insert_fap_entry(struct Cns_dbfd *dbfd,struct Cns_user_metadata *umd_entry);
+int Cns_update_fap_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_user_metadata *umd_entry);
+int Cns_get_fap_by_fileid(struct Cns_dbfd *dbfd,u_signed64 fileid,struct Cns_user_metadata *umd_entry,int lock,Cns_dbrec_addr *rec_addr);
+int Cns_decode_ftmd_entry(MYSQL_ROW row,int lock,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata  *ftmd_entry);
+int Cns_get_ftmd_by_fullpath(struct Cns_dbfd *dbfd,char *path,char *name,struct Cns_file_metadata *fmd_entry,int lock,Cns_dbrec_addr *rec_addr);
+int Cns_insert_ftmd_entry(struct Cns_dbfd *dbfd,struct Cns_file_metadata *fmd_entry);
+int Cns_unique_transform_id(struct Cns_dbfd *dbfd,u_signed64 *unique_id);
+int Cns_get_ftmd_by_pfid(struct Cns_dbfd *dbfd,int bod,u_signed64 parent_fileid,struct Cns_file_metadata *fmd_entry,int getattr,int endlist,DBLISTPTR *dblistptr);
+int Cns_update_ftmd_entry(struct Cns_dbfd *dbfd,Cns_dbrec_addr *rec_addr,struct Cns_file_metadata *fmd_entry);
+int Cns_get_t_filemeta(struct Cns_dbfd *dbfd,char *path,char *basename,int *fd,int *filesize,int *mode);
+int Cns_get_t_filepath(struct Cns_dbfd *dbfd,int fd,char *actual_path);
+int Cns_set_t_segmeta(struct Cns_dbfd *dbfd,char *path,char *basename,int fd,int size,char *physic_path);
+int Cns_set_t_filebitmap(struct Cns_dbfd *dbfd,char *path,char *basename,char* bitmap);
+int Cns_get_bitmap(struct Cns_dbfd *dbfd,char *path,char *basename,char *bitmap);
+int Cns_get_fd_by_actualpath(struct Cns_dbfd *dbfd, char *path, int *fd);
+int Cns_get_path_by_fd(struct Cns_dbfd *dbfd, int fd, char * path,char *name);
+int Cns_get_fileid_by_fullpath(struct Cns_dbfd *dbfd, char *path, char *filename, int *id);
+int Cns_get_dirlist_by_parent_fileid(struct Cns_dbfd *dbfd, int id, char *dirlist);
+int Cns_get_ftmd_by_fileid(struct Cns_dbfd *dbfd, int id, struct Cns_file_metadata *fmd_entry);
 #endif

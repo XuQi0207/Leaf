@@ -19,22 +19,18 @@ static char sccsid[] = "@(#)Cns_selectsrvr.c,v 1.7 2003/10/30 11:29:14 CERN IT-P
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "Castor_limits.h"
 #include "serrno.h"
+#include "common.h"
 
 int DLL_DECL
-Cns_selectsrvr(path, current_directory_server, server, actual_path)
-const char *path;
-char *current_directory_server;
-char *server;
-char **actual_path;
+Cns_selectsrvr(const char *path,char *current_directory_server,char *server,char **actual_path)
 {
 	char buffer[CA_MAXPATHLEN+1];
 	char *domain;
 	char func[16];
-	char *getconfent();
-	char *getenv();
 	int n;
 	char *p;
  
@@ -44,7 +40,7 @@ char **actual_path;
 		return (-1);
 	}
 
-	if (*path != '/' && (p = strstr (path, ":/"))) {
+	if (*path != '/' && (p = (char *)strstr (path, ":/"))) {
 		n = p - path;
 		if (n > CA_MAXHOSTNAMELEN) {
 			serrno = EINVAL;

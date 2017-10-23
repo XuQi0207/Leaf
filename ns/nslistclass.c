@@ -23,9 +23,9 @@ static char sccsid[] = "@(#)nslistclass.c,v 1.9 2002/08/21 09:58:21 CERN IT-PDP/
 #include "Cns_api.h"
 #include "serrno.h"
 int nohdr = 0;
-main(argc, argv)
-int argc;
-char **argv;
+
+int listentry(struct Cns_fileclass *Cns_fileclass);
+int main(int argc, char **argv)
 {
 	int c;
 	int classid = 0;
@@ -126,8 +126,7 @@ char **argv;
 	exit (0);
 }
 
-listentry(Cns_fileclass)
-struct Cns_fileclass *Cns_fileclass;
+int listentry(struct Cns_fileclass *Cns_fileclass)
 {
 	struct group *gr;
 	int i;

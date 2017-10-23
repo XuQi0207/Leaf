@@ -20,9 +20,7 @@ static char sccsid[] = "@(#)nslisttape.c,v 1.10 2004/03/29 13:52:55 CERN IT-PDP/
 #include "Cns_api.h"
 #include "serrno.h"
 #include "u64subr.h"
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	static int dsflag = 0;

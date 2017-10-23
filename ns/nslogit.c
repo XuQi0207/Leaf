@@ -7,6 +7,9 @@
 static char sccsid[] = "@(#)nslogit.c,v 1.6 2003/08/28 10:16:29 CERN IT-PDP/DM Jean-Philippe Baud";
 #endif /* not lint */
 
+#include<stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -17,7 +20,7 @@ static char sccsid[] = "@(#)nslogit.c,v 1.6 2003/08/28 10:16:29 CERN IT-PDP/DM J
 #include "Cns.h"
 extern int jid;
 
-nslogit(char *func, char *msg, ...)
+int nslogit(char *func, char *msg, ...)
 {
 	va_list args;
 	char prtbuf[LOGBUFSZ];

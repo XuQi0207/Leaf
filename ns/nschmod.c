@@ -15,6 +15,7 @@ static char sccsid[] = "@(#)nschmod.c,v 1.5 2000/12/06 15:23:05 CERN IT-PDP/DM J
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <ctype.h>
 #if defined(_WIN32)
 #include <winsock2.h>
 #endif
@@ -22,9 +23,7 @@ static char sccsid[] = "@(#)nschmod.c,v 1.5 2000/12/06 15:23:05 CERN IT-PDP/DM J
 #include "Cns_api.h"
 #include "serrno.h"
 extern	char	*getenv();
-main(argc, argv)
-int argc;
-char **argv;
+main(int argc, char **argv)
 {
 	int absmode = 0;
 	int c;

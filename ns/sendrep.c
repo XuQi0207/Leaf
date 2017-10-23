@@ -7,6 +7,7 @@
 static char sccsid[] = "@(#)sendrep.c,v 1.8 2003/08/28 10:16:29 CERN IT-PDP/DM Jean-Philippe Baud";
 #endif /* not lint */
 
+#include<stdio.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <string.h>
@@ -19,18 +20,23 @@ static char sccsid[] = "@(#)sendrep.c,v 1.8 2003/08/28 10:16:29 CERN IT-PDP/DM J
 #include "marshall.h"
 #include "net.h"
 #include "Cns.h"
-sendrep(int rpfd, int rep_type, ...)
+#include "Cns_server.h"
+int sendrep(int rpfd, int rep_type, ...)
 {
 	va_list args;
 	char func[16];
 	char *msg;
 	int n;
 	char *p;
-	char prtbuf[PRTBUFSZ];
+//	char prtbuf[PRTBUFSZ];
+//	char prtbuf[1024*1024+12];
+	char *prtbuf=(char *)malloc(1024*1024+1);
 	char *q;
 	char *rbp;
 	int rc;
-	char repbuf[REPBUFSZ+12];
+//	char repbuf[REPBUFSZ+12];
+//	char repbuf[1024*1024+12];
+	char *repbuf=(char *)malloc(1024*1024+1);
 	int repsize;
 
 	strcpy (func, "sendrep");
@@ -65,9 +71,13 @@ sendrep(int rpfd, int rep_type, ...)
 		nslogit (func, NS002, "send", neterror());
 		if (rep_type == CNS_RC)
 			netclose (rpfd);
+		free(repbuf);
+		free(prtbuf);
 		return (-1);
 	}
 	if (rep_type == CNS_RC)
 		netclose (rpfd);
+	free(prtbuf);
+	free(repbuf);
 	return (0);
 }

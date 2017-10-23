@@ -14,6 +14,7 @@
 #ifndef _CNS_H
 #define _CNS_H
 
+
 			/* name server constants */
 
 #include "Cns_constants.h"
@@ -77,6 +78,21 @@
 #define CNS_GETACTUALPATH 39
 #define CNS_SETFILETRANSFORMMETADATA 40
 #define CNS_GETDATADAEMON 41
+#define CNS_OPENDIR_T 42
+#define CNS_READDIR_T 43
+#define CNS_CLOSEDIR_T 44
+#define CNS_CAT 45
+#define CNS_SETSEG 46
+#define CNS_DOWNLOAD_SEG 47
+#define CNS_ACCESS_T 48
+#define CNS_OPEN_T 49
+#define CNS_READ_T 50
+#define CNS_CREATEFILE_T 51
+#define CNS_GET_VIRPATH 52
+#define CNS_TOUCH_T 53
+#define CNS_STAT_T 54
+#define CNS_OPENDIR_T_XRD 55
+#define CNS_GETATTR_ID 56
 
 			/* name server reply types */
 

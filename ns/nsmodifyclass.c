@@ -18,9 +18,7 @@ static char sccsid[] = "@(#)nsmodifyclass.c,v 1.9 2002/08/21 09:58:21 CERN IT-PD
 #include "Cgetopt.h"
 #include "Cns_api.h"
 #include "serrno.h"
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	struct Cns_fileclass Cns_fileclass;
@@ -210,7 +208,7 @@ char **argv;
 			}
 			if (errflg) break;
 			Cns_fileclass.nbtppools = nbtppools;
-			if ((q = calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
+			if ((q = (char *)calloc (nbtppools, CA_MAXPOOLNAMELEN+1)) == NULL) {
 				fprintf (stderr, "nsmodifyclass %s: %s\n",
 				    Cns_fileclass.name, sstrerror(ENOMEM));
 				errflg++;

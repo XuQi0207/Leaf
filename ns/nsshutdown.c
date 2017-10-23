@@ -12,6 +12,8 @@ static char sccsid[] = "@(#)nsshutdown.c,v 1.6 2001/01/16 07:35:21 CERN IT-PDP/D
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include "unistd.h"
+#include "Cns_api.h"
 #if defined(_WIN32)
 #include <winsock2.h>
 #else
@@ -22,9 +24,7 @@ static char sccsid[] = "@(#)nsshutdown.c,v 1.6 2001/01/16 07:35:21 CERN IT-PDP/D
 #include "serrno.h"
 extern	char	*optarg;
 extern	int	optind;
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	int errflg = 0;

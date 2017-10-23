@@ -15,6 +15,7 @@ static char sccsid[] = "@(#)nstouch.c,v 1.3 2002/11/20 07:55:39 CERN IT-PDP/DM J
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
 #if defined(_WIN32)
 #include <winsock2.h>
 #endif
@@ -25,9 +26,9 @@ static time_t cvt_datime();
 extern	char	*getenv();
 extern	char	*optarg;
 extern	int	optind;
-main(argc, argv)
-int argc;
-char **argv;
+
+static time_t cvt_datime(char *arg);
+int main(int argc, char **argv)
 {
 	int aflag = 0;
 	int c;
@@ -131,9 +132,7 @@ char **argv;
 	exit (0);
 }
 
-static time_t
-cvt_datime(arg)
-char *arg;
+static time_t cvt_datime(char *arg)
 {
 	int cc = 0;
 	time_t curtime;

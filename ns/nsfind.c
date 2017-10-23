@@ -43,9 +43,10 @@ int lsflag;
 char mtimeflg;
 int mtimeval;
 time_t current_time;
-main(argc, argv)
-int argc;
-char **argv;
+
+int listentry(char *dir,char *path,struct Cns_filestat *statbuf);
+int procpath (char *dir);
+int main(int argc,char ** argv)
 {
 	int c;
 	char fullpath[CA_MAXPATHLEN+1];
@@ -159,10 +160,7 @@ char **argv;
 	exit (0);
 }
 
-listentry(dir, path, statbuf)
-char *dir;
-char *path;
-struct Cns_filestat *statbuf;
+int listentry(char *dir,char *path,struct Cns_filestat *statbuf)
 {
 	struct group *gr;
 	char modestr[11];
@@ -242,8 +240,7 @@ struct Cns_filestat *statbuf;
 	return (0);
 }
 
-procpath (dir)
-char *dir;
+int procpath (char *dir)
 {
 	int c;
 	char curdir[CA_MAXPATHLEN+1];

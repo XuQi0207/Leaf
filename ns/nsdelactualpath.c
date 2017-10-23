@@ -22,15 +22,13 @@ static char sccsid[] = "@(#)nsdelactualpath.c, 2016/08/29 10:29 XuQi";
 #include "Cns_api.h"
 #include "serrno.h"
 extern	char	*getenv();
-main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	int c;
 	int errflg = 0;
 	char fullpath[CA_MAXPATHLEN+1];
 	char *p;
-	char *path;
+	char path[CA_MAXPATHLEN+1];
 #if defined(_WIN32)
 	WSADATA wsadata;
 #endif
@@ -46,7 +44,7 @@ char **argv;
 		exit (SYERR);
 	}
 #endif
-	path = argv[1];
+	strcpy(path ,argv[1]);
 	if (*path != '/' && strstr (path, ":/") == NULL) {
 		if ((p = getenv ("CASTOR_HOME")) == NULL ||
 		    strlen (p) + strlen (path) + 1 > CA_MAXPATHLEN) {
