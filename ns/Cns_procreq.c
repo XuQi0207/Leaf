@@ -4212,7 +4212,8 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
 //int w =Py_IsInitialized();
 //int h = PyEval_ThreadsInitialized();
 int nHold=PyGILState_Check();
-
+	char func[20];
+	strcpy(func, "transread");
 PyGILState_STATE gstate;
 if(!nHold){
 gstate = PyGILState_Ensure();	
@@ -4228,7 +4229,7 @@ Py_BLOCK_THREADS
         pModule = PyImport_ImportModule("client");
         if(pModule == NULL)
         {
-                printf("can't load module\n");
+                nslogit(func, "client model load failed");
         }
 	PyObject * pFunc = NULL;
 	PyObject * result = NULL;
@@ -4243,13 +4244,13 @@ Py_BLOCK_THREADS
 	pFunc = PyObject_GetAttrString(pModule,"readentrance");
 	if(pFunc == NULL)
 	{
-		printf("can't load function\n");
+		nslogit(func, "client function parameter post failed");
 	}
 	
 	result = PyEval_CallObject(pFunc,pArgs);
 	Py_DECREF(pArgs);
 	if(result == NULL){
-		printf("call func fail\n");
+		nslogit(func, "client function call failed");
 	}
 	Py_DECREF(result);
 

@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
 
 */
 	/* read*/
-//	char *buff=NULL;
-	char *buff = (char *)malloc(BUFLEN+1);
+	char *buff=NULL;
+//	char *buff = (char *)malloc(BUFLEN+1);
 	if (argc < 2) {
 		printf("usage: test for read---ns_test localpath\n  Example: ns_test /data/xrootdfs/root/leaf/pytoc/upload/test.log\n");
         	exit(0);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		tmp++;
 	}
 	close(in);
-	free(buff);
+//	free(buff);
 	
 	/* getattr*/
 /*
