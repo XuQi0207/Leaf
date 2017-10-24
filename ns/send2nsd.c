@@ -38,12 +38,12 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 	int n;
 	char *p;
 //	char prtbuf[PRTBUFSZ];
-//	char prtbuf[1024*1024+12];
-	char *prtbuf=(char *)malloc(1024*1024+1);
+	char prtbuf[1024*1024+12];
+//	char *prtbuf=(char *)malloc(1024*1024+12);
 	int rep_type;
 //	char repbuf[REPBUFSZ];
-//	char repbuf[1024*1024+12];
-	char *repbuf=(char *)malloc(1024*1024+1);
+	char repbuf[1024*1024+12];
+//	char *repbuf=(char *)malloc(1024*1024+12);
 	int s;
 	struct sockaddr_in sin; /* internet socket */
 	struct servent *sp;
@@ -75,8 +75,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 		if ((hp = Cgethostbyname (Cnshost)) == NULL) {
 			Cns_errmsg (func, NS009, "Host unknown:", Cnshost);
 			serrno = SENOSHOST;
-			free(prtbuf);
-			free(repbuf);
+//			free(prtbuf);
+//			free(repbuf);
 			return (-1);
 		}
 		sin.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
@@ -84,8 +84,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 		if ((s = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
 			Cns_errmsg (func, NS002, "socket", neterror());
 			serrno = SECOMERR;
-			free(prtbuf);
-                        free(repbuf);
+//			free(prtbuf);
+//                        free(repbuf);
 
 			return (-1);
 		}
@@ -99,15 +99,15 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 				Cns_errmsg (func, NS000, Cnshost);
 				(void) netclose (s);
 				serrno = ENSNACT;
-				free(prtbuf);
-                                free(repbuf);
+//				free(prtbuf);
+//                                free(repbuf);
 				return (-1);
 			} else {
 				Cns_errmsg (func, NS002, "connect", neterror());
 				(void) netclose (s);
 				serrno = SECOMERR;
-	                        free(prtbuf);
-	                        free(repbuf);
+//	                        free(prtbuf);
+//	                        free(repbuf);
 
 				return (-1);
 			}
@@ -126,8 +126,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 			Cns_errmsg (func, NS002, "send", neterror());
 		(void) netclose (s);
 		serrno = SECOMERR;
-                free(prtbuf);
-                free(repbuf);
+//                free(prtbuf);
+//                free(repbuf);
 
 		return (-1);
 	}
@@ -142,8 +142,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 				Cns_errmsg (func, NS002, "recv", neterror());
 			(void) netclose (s);
 			serrno = SECOMERR;
-                        free(prtbuf);
-                        free(repbuf);
+//                        free(prtbuf);
+//                        free(repbuf);
 
 			return (-1);
 		}
@@ -152,8 +152,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 		unmarshall_LONG (p, rep_type) ;
 		unmarshall_LONG (p, c) ;
 		if (rep_type == CNS_IRC){
-                        free(prtbuf);
-                        free(repbuf);
+//                        free(prtbuf);
+//                        free(repbuf);
 			return (0);
                 }
 		if (rep_type == CNS_RC) {
@@ -171,8 +171,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 				Cns_errmsg (func, NS002, "recv", neterror());
 			(void) netclose (s);
 			serrno = SECOMERR;
-                        free(prtbuf);
-                        free(repbuf);
+//                        free(prtbuf);
+//                        free(repbuf);
 
 			return (-1);
 		}
@@ -191,8 +191,8 @@ int send2nsd(int *socketp,char *host,char *reqp,int reql,char *user_repbuf,int u
 			}
 		}
 	}
-        free(prtbuf);
-        free(repbuf);
+//        free(prtbuf);
+//        free(repbuf);
 
 	return (c);
 }
