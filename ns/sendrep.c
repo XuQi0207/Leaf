@@ -29,14 +29,14 @@ int sendrep(int rpfd, int rep_type, ...)
 	int n;
 	char *p;
 //	char prtbuf[PRTBUFSZ];
-	char prtbuf[1024*1024+12];
-//	char *prtbuf=(char *)malloc(1024*1024+12);
+//	char prtbuf[1024*1024+12];
+	char *prtbuf=(char *)malloc(1024*1024+12);
 	char *q;
 	char *rbp;
 	int rc;
 //	char repbuf[REPBUFSZ+12];
-	char repbuf[1024*1024+12];
-//	char *repbuf=(char *)malloc(1024*1024+12);
+//	char repbuf[1024*1024+12];
+	char *repbuf=(char *)malloc(1024*1024+12);
 	int repsize;
 
 	strcpy (func, "sendrep");
@@ -71,13 +71,13 @@ int sendrep(int rpfd, int rep_type, ...)
 		nslogit (func, NS002, "send", neterror());
 		if (rep_type == CNS_RC)
 			netclose (rpfd);
-//		free(repbuf);
-//		free(prtbuf);
+		free(repbuf);
+		free(prtbuf);
 		return (-1);
 	}
 	if (rep_type == CNS_RC)
 		netclose (rpfd);
-//	free(prtbuf);
-//	free(repbuf);
+	free(prtbuf);
+	free(repbuf);
 	return (0);
 }
