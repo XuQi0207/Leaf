@@ -12,6 +12,7 @@
 #include "Cns_api.h"
 #include "Cns.h"
 #include "serrno.h"
+#define MEMSIZE (1024*1024+10)
 
 int Cns_read_t(const char *path, char *buff, size_t size, off_t offset, char *path_t)
 {
@@ -27,8 +28,8 @@ int Cns_read_t(const char *path, char *buff, size_t size, off_t offset, char *pa
         char server[CA_MAXHOSTNAMELEN+1];
         struct Cns_api_thread_info *thip;
         uid_t uid;
-        char repbuf[1024*1024+10];
-//	char *repbuf=(char *)malloc(1024*1024+1);
+//        char repbuf[1024*1024+10];
+	char *repbuf=(char *)malloc(MEMSIZE);
         int res;
 
         strcpy (func, "Cns_read_t");
@@ -86,7 +87,7 @@ int Cns_read_t(const char *path, char *buff, size_t size, off_t offset, char *pa
         msglen = sbp - sendbuf;
         marshall_LONG (q, msglen);      /* update length field */
 
-        while ((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, sizeof(repbuf))) &&
+        while ((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, MEMSIZE)) &&
             serrno == ENSNACT)
                 sleep (RETRYI);
         if (c == 0) {
@@ -95,7 +96,7 @@ int Cns_read_t(const char *path, char *buff, size_t size, off_t offset, char *pa
 		unmarshall_STRING(rbp, buff);
         }
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
-//	free(repbuf);
+	free(repbuf);
         return res;
 }
 

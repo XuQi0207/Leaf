@@ -4531,8 +4531,8 @@ int Cns_srv_open_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
 int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
 {
         size_t size;
-	char buf[1024*1024+1];
-//	char *buf=(char *)malloc(1024*1024+1);
+//	char buf[1024*1024+1];
+	char *buf=(char *)malloc(1024*1024+1);
 	off_t offset;
 	u_signed64 cwd;
         char func[16];
@@ -4546,8 +4546,8 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
         uid_t uid;
         int res;
 	int fd;
-        char repbuf[1024*1024+10];
-//	char *repbuf=(char *)malloc(1024*1024+1);
+//        char repbuf[1024*1024+10];
+	char *repbuf=(char *)malloc(1024*1024+10);
 	int bitmap_size=1024;
 
         strcpy (func, "Cns_srv_read_t");
@@ -4557,8 +4557,8 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
         nslogit (func, NS092, "read_t", uid, gid, clienthost);
         unmarshall_HYPER (rbp, cwd);
         if (unmarshall_STRINGN (rbp, path, CA_MAXPATHLEN+1)){
-//		free(buf);
-//		free(repbuf);
+		free(buf);
+		free(repbuf);
                 return (SENAMETOOLONG);
 	}
         unmarshall_LONG (rbp, size);
@@ -4571,20 +4571,20 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
 	char *file_tmp=(char *)malloc(strlen(remote_path)+1);
         strcpy(file_tmp, remote_path);
         if (Cns_splitname (cwd, file_tmp, basename)){
-//		free(buf);
-//		free(repbuf);
+		free(buf);
+		free(repbuf);
                 return (serrno);
 	}
         char *bitmap=(char *)malloc(bitmap_size*sizeof(char));
         /* start transaction */
         if(Cns_get_bitmap(&thip->dbfd, file_tmp, basename, bitmap)){
-//		free(buf);
-//		free(repbuf);
+		free(buf);
+		free(repbuf);
                 return(serrno);
 	}
         if(bitmap==NULL){
-//		free(buf);
-//		free(repbuf); 
+		free(buf);
+		free(repbuf); 
                return -1;
         }
         int sblock_num;
@@ -4627,8 +4627,8 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
 	free(file_tmp);
 	free(bitmap);
         sendrep (thip->s, MSG_DATA, sbp - repbuf, repbuf);
-//	free(buf);
-//	free(repbuf);
+	free(buf);
+	free(repbuf);
         return  0;
 }
 

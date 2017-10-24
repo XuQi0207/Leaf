@@ -127,11 +127,12 @@ int xrd_read(const char *actual_path, size_t size, off_t offset,char *buff)
         char *path_t=(char *)malloc(1024);
         char *actual_path_t=(char *)malloc(strlen(actual_path)+1);
         strcpy(actual_path_t,actual_path);
+/*
 	pthread_t thread[THREAD_NUM];
 	void *thread_return[THREAD_NUM];
 	struct thread_argument arg;
 	int wait_thread_end;
-
+*/
 	Cns_get_virpath(actual_path_t, path_t);
         if((res=sql_check(path_t, location, &filesize))==0){
 
