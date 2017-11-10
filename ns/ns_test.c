@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
        	}
 
 */
+
 	/* read*/
 //	char *buff=NULL;
 	char *buff = (char *)malloc(BUFLEN+1);
@@ -66,7 +67,7 @@ int main(int argc, char *argv[])
 	int tmp=1;
 	int tosize=0;
 	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
-
+/*
 	while (tosize<size) {
        		if(xrd_read(actual_path,BUFLEN,offset,buff)==0){
 			printf("%d.read success\n",tmp);
@@ -89,10 +90,10 @@ int main(int argc, char *argv[])
                 tosize=tosize+BUFLEN;
 		tmp++;
 	}
+*/
 
-/*
 		printf("buff length: %d\n",strlen(buff));  
-                if(xrd_read(actual_path,7216,0,buff)==0){
+                if(xrd_read(actual_path,1721010,0,buff)==0){
                         printf("%d.read success\n",tmp);
                 }
                 else{
@@ -103,7 +104,7 @@ int main(int argc, char *argv[])
 			printf("buff length: %d\n",strlen(buff));
                         write(in,buff,strlen(buff));
 		}
-*/
+
 	close(in);
 	free(buff);
 

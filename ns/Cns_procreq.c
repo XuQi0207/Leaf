@@ -4297,12 +4297,23 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
         if(bitmap==NULL){
                 return -1;
         }
-        int sblock_num;
-        int eblock_num;
-        sblock_num=offset/UNIT_SIZE;//the num of the first data blcok 
+        int sblock_num=0;
+        int eblock_num=0;
+        sblock_num=offset/UNIT_SIZE;//the num of the first data blcok
+	if(sblock_num>=bitmap_num){
+		nslogit(func,"file offset is more than filesize\n");
+		return 1;
+	} 
         eblock_num=(offset+size)/UNIT_SIZE;
         if((offset+size)%UNIT_SIZE!=0)
                 eblock_num+=1;
+	if(eblock_num==sblock_num){
+		nslogit(func, "No data is request\n");
+		return 1;
+	}
+	if(eblock_num>bitmap_num){
+		eblock_num=bitmap_num;
+	}
         int size_num=0;
         int transform_start;
 	int transform_end;
@@ -4404,33 +4415,33 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	if(eblock_num%10!=0){
 		transform_end=transform_end+10;
 	}
-        if(bitmap_num<=transform_start){
-                nslogit(func, "transform size wrong\n", NULL);
-                return 1;
-        }
-	if(bitmap_num<transform_end){
-		transform_end=bitmap_num;
-	}
 
-	int p_res=-1;	
+	int p_res=-1;
 	for(int t=transform_start;t<transform_end;t=t+10)	
 	{
 		if(bitmap[t]=='0'){
-	                struct timeval start,end;
-	                float et;
-	                char msg[1024];
-	                gettimeofday(&start,0);
-	                sprintf(msg, "start time: %d.%d\n", start.tv_sec, start.tv_usec);
-	                nslogit(func, "begin download %s\n", msg);
-	
-			transread("202.122.37.90:28001",filepath,location,"0","0",t*UNIT_SIZE,10*UNIT_SIZE, py_module_path);
-	
+			int transize=0;
+			if(t+10<=bitmap_num){	
+				transize=10;
+			}else{
+				transize=bitmap_num-t;
+			}
+
+                        struct timeval start,end;
+                        float et;
+                        char msg[1024];
+                        gettimeofday(&start,0);
+                        sprintf(msg, "start time: %d.%d\n", start.tv_sec, start.tv_usec);
+                        nslogit(func, "begin download %s\n", msg);
+
+			transread("202.122.37.90:28001",filepath,location,"0","0",t*UNIT_SIZE,transize*UNIT_SIZE, py_module_path);
+
 	                gettimeofday(&end,0);
 	                et=end.tv_sec*1000+end.tv_usec/1000-start.tv_sec*1000-start.tv_usec/1000;
        	        	sprintf(msg, "end time: %d.%d used time %.2f(ms)\n", end.tv_sec, end.tv_usec, et);
         	        nslogit(func, "end download %s\n", msg);
 
-			for(int i=t;i<t+10;i++){
+			for(int i=t;i<t+transize;i++){
 				 bitmap[i]='2';
 			}
 			p_res=0;
