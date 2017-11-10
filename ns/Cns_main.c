@@ -35,6 +35,12 @@
 #if !defined(linux)
 #endif
 
+char localfilepath[128]={0};
+int localfileid=-1;
+char configfile_path[]="/etc/profile1";
+char config_key[]="PY_MODULE_PATH";
+char py_module_path[128];
+
 int being_shutdown;
 char db_pwd[33];
 char db_srvr[33];
@@ -44,7 +50,6 @@ int jid;
 char localhost[CA_MAXHOSTNAMELEN+1];
 int maxfds;
 struct Cns_srv_thread_info Cns_srv_thread_info[CNS_NBTHREADS];
-PyThreadState * mainThreadState=NULL;
 
 int procreq(int magic,int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
 int procdirreq_t(int req_type,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
@@ -52,6 +57,7 @@ int procdirreq(int req_type,char *req_data,char *clienthost,struct Cns_srv_threa
 int getreq(int s,int *magic,int *req_type,char *req_data,char **clienthost);
 void *doit(void *arg);
 int Cns_main(struct main_args *main_args);
+int get_conf_value(char *file_path, char *key_name, char *value);
 
 void python_initialize()
 {
@@ -68,7 +74,68 @@ void python_initialize()
 }
 void python_destroy()
 {
+	memset(localfilepath, 0, 128);
+	close(localfileid);
+	int localfileid=-1;
         Py_Finalize();
+}
+
+int get_conf_value(char *file_path, char *key_name, char *value)
+{
+	char func[]="get_conf_value";
+        FILE *fp = NULL;
+        char *line = NULL, *substr = NULL;
+        size_t len = 0, tlen = 0;
+        ssize_t read = 0;
+
+    if(file_path == NULL || key_name == NULL || value == NULL)
+    {
+        nslogit(func, "config_key parameter is wrong\n");
+	return -1;
+    }
+        fp = fopen(file_path, "r");
+        if (fp == NULL)
+    {
+        nslogit(func,"open config_file failed\n");
+	return -1;
+    }
+ while ((read = getline(&line, &len, fp)) != -1)
+    {
+        substr = strstr(line, key_name);
+        if(substr == NULL)
+        {
+            continue;
+        }
+        else
+        {
+            tlen = strlen(key_name);
+            if(line[tlen] == '=')
+            {
+                strncpy(value, &line[tlen+1], len-tlen+1);
+                tlen = strlen(value);
+                nslogit(func, "config_key value is %s tlen is %d\n", value, tlen);
+                *(value+tlen-1) = '\0';
+                break;
+            }
+            else
+            {
+                nslogit(func, "config file format is invaild tlen is %d len is %d\n", tlen, len);
+                fclose(fp);
+                return -2;
+            }
+        }
+        }
+    if(substr == NULL)
+    {
+        nslogit(func,"key: %s is not in config file!\n", key_name);
+        fclose(fp);
+        return -1;
+    }
+
+    free(line);
+    fclose(fp);
+    return 0;
+
 }
 
 int Cns_main(struct main_args *main_args)
@@ -95,6 +162,7 @@ int Cns_main(struct main_args *main_args)
 	struct servent *sp;
 	int thread_index;
 	struct timeval timeval;
+
 
 	jid = getpid();
 	strcpy (func, "Cns_serv");
@@ -210,8 +278,9 @@ int Cns_main(struct main_args *main_args)
 	FD_SET (s, &readmask);
 
 	python_initialize();//load python modle
+	int retret=get_conf_value(configfile_path, config_key, py_module_path);
+
 		
-	
 		/* main loop */
 
 	while (1) {
@@ -306,6 +375,7 @@ int getreq(int s,int *magic,int *req_type,char *req_data,char **clienthost)
 	int n;
 	char *rbp;
 	char req_hdr[3*LONGSIZE];
+
 
 	l = netread_timeout (s, req_hdr, sizeof(req_hdr), CNS_TIMEOUT);
 	if (l == sizeof(req_hdr)) {
@@ -489,7 +559,6 @@ int procreq(int magic,int req_type,char *req_data,char *clienthost,struct Cns_sr
 	int c;
 
 	/* connect to the database if not done yet */
-
 	if (! thip->db_open_done) {
 		if (Cupv_seterrbuf (thip->errbuf, PRTBUFSZ)) {
 			c = SEINTERNAL;
@@ -630,7 +699,7 @@ int procreq(int magic,int req_type,char *req_data,char *clienthost,struct Cns_sr
 		c = Cns_srv_setseg (magic, req_data, clienthost, thip);
 		break;
 	case CNS_DOWNLOAD_SEG:
-		c = Cns_srv_download_seg(magic, req_data, clienthost, thip);
+		c = Cns_srv_download_seg(magic, req_data, clienthost, thip, py_module_path);
 		break;
 	case CNS_OPENDIR_T:
 		c=procdirreq_t (req_type, req_data, clienthost, thip);

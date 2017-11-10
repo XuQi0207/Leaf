@@ -4188,48 +4188,36 @@ void *thread_download(void *arg)
 	
 }
 */
-/*
-void python_initialize()
-{
-        Py_Initialize();
-        if(!Py_IsInitialized())
-        {
-                printf("can't initialize\n");
-        }
-        PyRun_SimpleString("import sys");
-        PyRun_SimpleString("import os");
-        PyRun_SimpleString("import string");
-        PyRun_SimpleString("sys.path.append('/home/xuq/lcs/ns/')");
-}
-void phython_destroy()
-{
-        Py_Finalize();
-}
-*/
 
-void transread(const char *host,const char *filepath,const char *targetdir,const char *uid,const char *gid,int position,int size)
+void transread(const char *host,const char *filepath,const char *targetdir,const char *uid,const char *gid,int position,int size, char *py_module_path)
 {
+        char func[20];
+        strcpy(func, "transread");
+        nslogit(func, "transread start\n");
+
 //int w =Py_IsInitialized();
 //int h = PyEval_ThreadsInitialized();
-int nHold=PyGILState_Check();
-	char func[20];
-	strcpy(func, "transread");
-PyGILState_STATE gstate;
-if(!nHold){
-gstate = PyGILState_Ensure();	
-}
-Py_BEGIN_ALLOW_THREADS  
-Py_BLOCK_THREADS
-
+	int nHold=PyGILState_Check();
+	PyGILState_STATE gstate;
+	if(!nHold){
+		gstate = PyGILState_Ensure();	
+	}
+	Py_BEGIN_ALLOW_THREADS  
+	Py_BLOCK_THREADS
 	PyObject * pModule = NULL;
         PyRun_SimpleString("import sys");
         PyRun_SimpleString("import os");
         PyRun_SimpleString("import string");
-        PyRun_SimpleString("sys.path.append('/home/xuq/lcs/ns/')");
+
+	char do_append[128];
+	strcpy(do_append, "sys.path.append('");
+	strcat(do_append, py_module_path);
+	strcat(do_append, "')");
+        PyRun_SimpleString(do_append);
         pModule = PyImport_ImportModule("client");
         if(pModule == NULL)
         {
-                nslogit(func, "client model load failed");
+                nslogit(func, "client model load failed\n");
         }
 	PyObject * pFunc = NULL;
 	PyObject * result = NULL;
@@ -4244,26 +4232,25 @@ Py_BLOCK_THREADS
 	pFunc = PyObject_GetAttrString(pModule,"readentrance");
 	if(pFunc == NULL)
 	{
-		nslogit(func, "client function parameter post failed");
+		nslogit(func, "client function parameter post failed\n");
 	}
 	
 	result = PyEval_CallObject(pFunc,pArgs);
 	Py_DECREF(pArgs);
 	if(result == NULL){
-		nslogit(func, "client function call failed");
+		nslogit(func, "client function call failed\n");
 	}
 	Py_DECREF(result);
-
-Py_UNBLOCK_THREADS
-Py_END_ALLOW_THREADS
-if(!nHold){
-PyGILState_Release(gstate);
+	Py_UNBLOCK_THREADS
+	Py_END_ALLOW_THREADS
+	if(!nHold){
+		PyGILState_Release(gstate);
+	}
 }
-}
 
-int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
+int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip, char *py_module_path)
 {
-        u_signed64 cwd;
+	u_signed64 cwd;
         char func[19];
         gid_t gid;
 	uid_t uid;
@@ -4316,7 +4303,6 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
         eblock_num=(offset+size)/UNIT_SIZE;
         if((offset+size)%UNIT_SIZE!=0)
                 eblock_num+=1;
-        int i;
         int size_num=0;
         int transform_start;
 	int transform_end;
@@ -4414,36 +4400,62 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	}
 */
 	transform_start=(sblock_num/10)*10;
-	transform_end=transform_start+10;
+	transform_end=(eblock_num/10)*10;
+	if(eblock_num%10!=0){
+		transform_end=transform_end+10;
+	}
         if(bitmap_num<=transform_start){
                 nslogit(func, "transform size wrong\n", NULL);
                 return 1;
         }
 	if(bitmap_num<transform_end){
 		transform_end=bitmap_num;
-	}	
-	if(bitmap[transform_start]=='0'){
-		transread("202.122.37.90:28001",filepath,location,"0","0",transform_start*UNIT_SIZE,(transform_end-transform_start)*UNIT_SIZE);
-		for(i=transform_start;i<transform_end;i++){
-			 bitmap[i]='2';
-		}
-		res=Cns_set_t_filebitmap(&thip->dbfd, file_tmp, basename, bitmap);
-//		marshall_LONG(sbp, res);
-//		sendrep (thip->s, MSG_DATA, sbp - repbuf, repbuf);
-		free(bitmap);
-       		free(file_tmp);
-		return 0;
-		
-	}else if(bitmap[transform_start]=='1'||bitmap[transform_start]=='2'){
-	        free(bitmap);
-       		free(file_tmp);
-		return 0;
-	}else{
-		nslogit(func, "data_seg bitmap is wrong\n", NULL);
-	        free(bitmap);
-	        free(file_tmp);
-		return 1;
 	}
+
+	int p_res=-1;	
+	for(int t=transform_start;t<transform_end;t=t+10)	
+	{
+		if(bitmap[t]=='0'){
+	                struct timeval start,end;
+	                float et;
+	                char msg[1024];
+	                gettimeofday(&start,0);
+	                sprintf(msg, "start time: %d.%d\n", start.tv_sec, start.tv_usec);
+	                nslogit(func, "begin download %s\n", msg);
+	
+			transread("202.122.37.90:28001",filepath,location,"0","0",t*UNIT_SIZE,10*UNIT_SIZE, py_module_path);
+	
+	                gettimeofday(&end,0);
+	                et=end.tv_sec*1000+end.tv_usec/1000-start.tv_sec*1000-start.tv_usec/1000;
+       	        	sprintf(msg, "end time: %d.%d used time %.2f(ms)\n", end.tv_sec, end.tv_usec, et);
+        	        nslogit(func, "end download %s\n", msg);
+
+			for(int i=t;i<t+10;i++){
+				 bitmap[i]='2';
+			}
+			p_res=0;
+		}
+		else if(bitmap[t]=='1'||bitmap[t]=='2'){
+			continue;
+		}
+		else{
+		        nslogit(func, "data_seg bitmap is wrong\n", NULL);
+			p_res=-2;
+			break;
+		}
+		
+	}
+	if(p_res==0){
+		res=Cns_set_t_filebitmap(&thip->dbfd, file_tmp, basename, bitmap);
+	}else if(p_res==-2){
+		res=1;
+	}else{
+		res=0;
+	}
+	free(bitmap);
+       	free(file_tmp);
+	return res;
+		
 /*
         res=Cns_set_t_filebitmap(&thip->dbfd, file_tmp, basename, bitmap);
 	free(bitmap);
@@ -4534,6 +4546,7 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
         size_t size;
 //	char buf[1024*1024+1];
 	char *buf=(char *)malloc(1024*1024+1);
+	memset(buf, 0, 1024*1024);
 	off_t offset;
 	u_signed64 cwd;
         char func[16];
@@ -4596,16 +4609,25 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
         if((offset+size)%UNIT_SIZE!=0)
                 eblock_num+=1;
 */
-	if(bitmap[sblock_num]=='1'){		 
-		fd=open(path, O_RDONLY);
- 	       if(fd==-1)
-        		res=-1;
-		else 
-			res=0;
-		res=pread(fd, buf, size, offset);
-		close(fd);
+	if(bitmap[sblock_num]=='1'){
+                if(strcmp(localfilepath, path)!=0){//wether the file is read yet
+                        close(localfileid);
+                        fd=open(path, O_RDONLY);
+                        if(fd==-1)
+                                res=-1;
+                        else{
+                                res=0;
+                                localfileid=fd;
+                                strcpy(localfilepath, path);
+                                res=pread(localfileid, buf, size, offset);
+                        }
+                }else{
+                        res=pread(localfileid, buf, size, offset);
+                }
+
+				 
 	}else if(bitmap[sblock_num]=='2'){
-//		usleep(200000);
+/*
                 fd=open(path, O_RDONLY);
                	if(fd==-1)
                         res=-1;
@@ -4613,6 +4635,22 @@ int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
                         res=0;
                 res=pread(fd, buf, size, offset);
                 close(fd);
+*/
+
+                if(strcmp(localfilepath, path)!=0){//wether the file is read yet
+                        close(localfileid);
+                        fd=open(path, O_RDONLY);
+                        if(fd==-1)
+                                res=-1;
+                        else{
+                                res=0;
+                                localfileid=fd;
+                                strcpy(localfilepath, path);
+                		res=pread(localfileid, buf, size, offset);
+		        }
+                }else{
+                        res=pread(localfileid, buf, size, offset);
+                }
 
 	}else{
 		res=-1;

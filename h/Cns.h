@@ -10,15 +10,17 @@
 /*
  * @(#)Cns.h,v 1.21 2004/03/03 08:50:30 CERN IT-PDP/DM Jean-Philippe Baud
  */
-
 #ifndef _CNS_H
 #define _CNS_H
 
-
 			/* name server constants */
+ 
 
 #include "Cns_constants.h"
 #include "osdep.h"
+
+extern char localfilepath[128];
+extern int localfileid;
 #define CNS_MAGIC	0x030E1301
 #define CNS_MAGIC2	0x030E1302
 #define CNS_MAGIC3	0x030E1303
@@ -102,6 +104,7 @@
 #define	CNS_IRC		4
 
 			/* name server messages */
+
 
 #define NS000	"NS000 - name server not available on %s\n"
 #define	NS002	"NS002 - %s error : %s\n"

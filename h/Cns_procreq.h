@@ -78,7 +78,7 @@ int Cns_srv_opendir_t(int magic,char *req_data,char *clienthost,struct Cns_srv_t
 int Cns_srv_readdir_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip,struct Cns_file_metadata *fmd_entry,struct Cns_seg_metadata *smd_entry,struct Cns_user_metadata *umd_entry,int endlist,DBLISTPTR *dblistptr,DBLISTPTR *smdlistptr);
 int Cns_srv_cat (int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
 int Cns_srv_setseg (int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
-int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
+int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip,char *py_module_path);
 int Cns_srv_access_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
 int Cns_srv_open_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
 int Cns_srv_read_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip);
