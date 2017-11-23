@@ -1,15 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pthread.h>
 #include "Cns_api.h"
 
-using namespace std;
 
 #define MAXPATHLEN 1023 //the largest size of the file path 
 #define UNIT_SIZE (1024*1024)
@@ -30,17 +29,26 @@ static char location[MAXPATHLEN];//the path of the file int the cached server
 
 int path_filter(char *path){
 	char c[]="/data/xrootdfs";
+	char *p;
 	char *tmp_path=(char *)malloc(strlen(path)-strlen(c)+1);
-	strncpy(tmp_path, path+strlen(c), (strlen(path)-strlen(c)));
-	tmp_path[strlen(path)-strlen(c)]='\0';
-	strcpy(path,tmp_path);
+	if((p=strstr(path, c))==NULL){
+		printf("No such subpath of the path\n");
+		return 1;
+	}else if(p==path){
+		strncpy(tmp_path, path+strlen(c), (strlen(path)-strlen(c)));
+		tmp_path[strlen(path)-strlen(c)]='\0';
+		strcpy(path,tmp_path);
+	}else{
+		printf("the subpath is not corect\n");
+		return 1;
+	}
 	free(tmp_path);
 	return 0;
 }
 /*check wether the file exists convet it to data block path, 
  *  *  * path:the path of the target file, actual_path:the path of data block, 
  *   *   * sucess return 0 or return errno*/
-int sql_check(char * path,  char *actual_path,int *filesize)
+int sql_check(char * path,  char *actual_path, int *filesize)
 {
         int fd;
         int mode;
@@ -72,7 +80,8 @@ int xrd_access(const char *path,int mask)
         int filesize;
 	char *path_t=(char *)malloc(strlen(path)+1);
 	strcpy(path_t,path);
-	path_filter(path_t);
+	if(path_filter(path_t))
+		return 1;
         if((res=sql_check(path_t,location,&filesize))==0){
         /*      res=access(location, F_OK); */
                 res=Cns_access_t(location,mask);
@@ -83,15 +92,15 @@ int xrd_access(const char *path,int mask)
 /*open file if it exists, 
  *  * path:the path of the target file  flags:open mode  mode:access permission bits(only use when create file), 
  *   * success return 0 or return errno */
-int xrd_open(const char *path, int flags, mode_t mode, char * actual_path)
+int xrd_open(const char *path, int flags, mode_t mode, char * actual_path, int *filesize)
 {
         int res=0;
-        int filesize;
 	char *path_t=(char *)malloc(strlen(path)+1);
         strcpy(path_t,path);
-	path_filter(path_t);
+	if(path_filter(path_t))
+		return 1;
 	if(flags==16){//read only mode
-        	if((res=sql_check(path_t,location,&filesize))==0){
+        	if((res=sql_check(path_t,location,filesize))==0){
 /*
         		if(mode!=0)
         			res=open(location, flags, mode);
@@ -116,25 +125,23 @@ int xrd_open(const char *path, int flags, mode_t mode, char * actual_path)
 /*read file if it exists, 
  *  * actual_path:the localpath of the target file   offset:the start of data block  size: size of the data block
  *   * sucess return 0 or return errno*/
-
-int xrd_read(const char *actual_path, size_t size, off_t offset,char *buff)
+int xrd_read(const char *actual_path, size_t size, off_t offset,char *buff, char *path, int filesize)
 {
 
 	int i;
         int res=0;
-	int res1=0;
-        int filesize;
-        char *path_t=(char *)malloc(1024);
-        char *actual_path_t=(char *)malloc(strlen(actual_path)+1);
-        strcpy(actual_path_t,actual_path);
+	char *path_t=(char *)malloc(strlen(path)+1);
+	strcpy(path_t, path);
+	if(path_filter(path_t))
+		return 1;
 /*
 	pthread_t thread[THREAD_NUM];
 	void *thread_return[THREAD_NUM];
 	struct thread_argument arg;
 	int wait_thread_end;
 */
-	Cns_get_virpath(actual_path_t, path_t);
-        if((res=sql_check(path_t, location, &filesize))==0){
+//	Cns_get_virpath(actual_path_t, path_t);/*物理路径查询远程路径*/
+//        if((res=sql_check(path_t, location, &filesize))==0){/*在open中一次解决*/
 
 		int res1=Cns_download_seg(path_t, offset, size, location, filesize);
 		if(buff!=NULL){
@@ -162,8 +169,7 @@ int xrd_read(const char *actual_path, size_t size, off_t offset,char *buff)
 		}
 		res=Cns_read_t(location, buff, size, offset, path_t);
 */
-        }
-	free(path_t);
+        free(path_t);
         return res;
 }
 /*
@@ -181,7 +187,8 @@ int xrd_getattr(const char *path, struct stat *buf)
         int filesize;
         char *path_t=(char *)malloc(strlen(path)+1);
         strcpy(path_t,path);
-        path_filter(path_t);
+        if(path_filter(path_t))
+		return 1;
 	res=sql_check(path_t,location,&filesize);
         if(res==0||res==21){
                 res=Cns_stat_t(path_t,buf);
@@ -201,7 +208,8 @@ int xrd_opendir(const char *path, int *child_dirid)
 	char *path_t=(char *)malloc(strlen(path)+1);
 	memset(child_dirlist, -1, 1000);
 	strcpy(path_t,path);
-	path_filter(path_t);
+	if(path_filter(path_t))
+		return 1;
 	if(((res=sql_check(path_t,location,&filesize)))==EISDIR){
 		res1=Cns_opendir_t_xrd(path_t, child_dirlist);	
 	}

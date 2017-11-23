@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -49,34 +49,47 @@ int main(int argc, char *argv[])
 */
 
 	/* read*/
+
 //	char *buff=NULL;
 	char *buff = (char *)malloc(BUFLEN+1);
 	if (argc < 2) {
 		printf("usage: test for read---ns_test localpath\n  Example: ns_test /data/xrootdfs/root/leaf/pytoc/upload/test.log\n");
         	exit(0);
 	}
-	/*16 xrootd_read  40 xrootd_write*/
-	if(xrd_open(argv[1], 16, 0, actual_path)==0){
+	//16 xrootd_read  40 xrootd_write
+	int filesize=0;
+	int res;
+	if((res=xrd_open(argv[1], 16, 0, actual_path, &filesize))==0){
               	printf("data block open success\n");
-        } else {
-              	printf("data block open failed\n");
+        } else if(res==EISDIR){
+              	printf("It is a directory?\n");
 		return 1;
-        }
-	int size=1024*1024*25;
+        }else if(res==EINVAL ||res== ENAMETOOLONG){
+		printf("PATH is wrong\n");
+		return 1;
+	}
+	else if(res== ENOENT){
+		printf("No such file\n");
+		return 1;
+	}else{
+		printf("open data block failed\n");
+		return 1;
+	}
+	int size=1024*1024*1;
 	int offset=0;
 	int tmp=1;
 	int tosize=0;
-	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
-/*
+//	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
+
 	while (tosize<size) {
-       		if(xrd_read(actual_path,BUFLEN,offset,buff)==0){
+       		if(xrd_read(actual_path,BUFLEN,offset,NULL, argv[1], filesize)==0){
 			printf("%d.read success\n",tmp);
 		}
 	        else{
         		printf("%d.read failed %s\n",tmp, actual_path);
 			return 1;
        		}
-
+/*
 		if(buff!=NULL){
 			lseek(in, offset, SEEK_SET);
 			write(in,buff,strlen(buff));
@@ -85,15 +98,15 @@ int main(int argc, char *argv[])
 	        		printf("%d. over time: %d  %d\n",tmp,stop.tv_sec,stop.tv_usec);
 			}
 		}
-
+*/
 		offset=offset+BUFLEN;
                 tosize=tosize+BUFLEN;
 		tmp++;
 	}
-*/
 
+/*
 		printf("buff length: %d\n",strlen(buff));  
-                if(xrd_read(actual_path,1721010,0,buff)==0){
+                if(xrd_read(actual_path,721010,0,buff, argv[1], filesize)==0){
                         printf("%d.read success\n",tmp);
                 }
                 else{
@@ -104,8 +117,8 @@ int main(int argc, char *argv[])
 			printf("buff length: %d\n",strlen(buff));
                         write(in,buff,strlen(buff));
 		}
-
-	close(in);
+*/
+//	close(in);
 	free(buff);
 
 	

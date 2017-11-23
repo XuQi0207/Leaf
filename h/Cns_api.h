@@ -210,8 +210,8 @@ EXTERN_C int DLL_DECL Cns_get_Data_daemon(const char *path, struct Cns_filestat 
 EXTERN_C int DLL_DECL Cns_setactualpath(const char *path, char *comment);
 EXTERN_C int DLL_DECL Cns_delactualpath(const char *path);
 EXTERN_C int Cns_get_virpath(const char *actual_path, char *path);
-EXTERN_C int xrd_read(const char *path, size_t size, off_t offset, char *buff);
-EXTERN_C int xrd_open(const char *path, int flags, mode_t mode, char * actual_path);
+EXTERN_C int xrd_read(const char *path, size_t size, off_t offset, char *buff, char *path_t, int filesize);
+EXTERN_C int xrd_open(const char *path, int flags, mode_t mode, char * actual_path, int *filesize);
 EXTERN_C int xrd_access(const char *path,int mask);
 EXTERN_C int xrd_getattr(const char *path, struct stat *buf);
 EXTERN_C int xrd_opendir(const char *path, int *child_dirid);
