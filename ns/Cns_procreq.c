@@ -4256,7 +4256,6 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	uid_t uid;
 	char *rbp;
 	int res;
-        char repbuf[CA_MAXCOMMENTLEN+1];
 	char *sbp;
         char logbuf[CA_MAXPATHLEN+12];
         char filepath[CA_MAXPATHLEN+1];
@@ -4265,6 +4264,9 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	off_t offset;
 	size_t size;
 	int filesize;
+	int buff_tag;
+	char *buff=(char *)malloc(1024*1024+1);
+	char *repbuf=(char *)malloc(1024*1024+10);
 
         strcpy (func, "Cns_srv_download_seg");
         rbp = req_data;
@@ -4279,6 +4281,7 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
         unmarshall_LONG(rbp, size);
         unmarshall_STRING(rbp, location);
         unmarshall_LONG(rbp, filesize);
+	unmarshall_LONG(rbp, buff_tag);
 
         sprintf (logbuf, "Cns_srv_download_seg %s", filepath);
         Cns_logreq (func, logbuf);
@@ -4463,18 +4466,37 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	}else{
 		res=0;
 	}
+	sbp=repbuf;
+	if(res==0 && buff_tag==1 && size<=(1024*1024)){
+		int fd=open(location, O_RDONLY);
+		int r=-1;
+		if(fd==-1){
+			res=1;
+		}else{
+			r=pread(fd, buff, size, offset);
+		}
+		close(fd);
+		if(r!=-1){
+			marshall_LONG(sbp, 0);
+			marshall_STRING(sbp, buff);
+		}else{
+			marshall_LONG(sbp, 1);
+			marshall_STRING(sbp, "Fail");
+			res=1;
+		}
+	}else if(res==1 && buff_tag==1){
+		marshall_LONG(sbp, res);
+		marshall_STRING(sbp, "Fail");
+	}else{
+		marshall_LONG(sbp, res);	
+	}
+	sendrep (thip->s, MSG_DATA, sbp - repbuf, repbuf);	
 	free(bitmap);
        	free(file_tmp);
+	free(buff);
+	free(repbuf);
 	return res;
 		
-/*
-        res=Cns_set_t_filebitmap(&thip->dbfd, file_tmp, basename, bitmap);
-	free(bitmap);
-	free(file_tmp);
-//        marshall_LONG(sbp, res);
-//        sendrep (thip->s, MSG_DATA, sbp - repbuf, repbuf);
-        return (0);
-*/
 }
 
 int Cns_srv_access_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip)
@@ -4537,7 +4559,7 @@ int Cns_srv_open_t(int magic,char *req_data,char *clienthost,struct Cns_srv_thre
         if (unmarshall_STRINGN (rbp, path, CA_MAXPATHLEN+1))
                 return (SENAMETOOLONG);
         unmarshall_LONG (rbp, flags);
-        sprintf (logbuf, "oepn_t %o %s", flags, path);
+        sprintf (logbuf, "open_t %o %s", flags, path);
         Cns_logreq (func, logbuf);
         if (flags & ~(O_RDONLY |O_WRONLY |O_RDWR))
                 return (EINVAL);

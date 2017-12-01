@@ -166,6 +166,7 @@ ns_test: ns_test.c libns.a $(DEPLIB)
 libns.a: $(NSLIB_OBJS)
 	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
+	mv $@ ../lib/$@
 
 #../lib/libshift.a:	FORCE
 #	cd ../lib ; $(MAKE) libshift.a
@@ -457,6 +458,7 @@ $(EXPORTBIN)/ns_test: ns_test
 	@cp ns_test $(EXPORTBIN)/ns_test
 	@chmod 755 $(EXPORTBIN)/ns_test
 	@echo $(EXPORTBIN)/ns_test installed;	
+
 $(BIN):
 	-mkdir -p $@
 	chown root $@

@@ -202,7 +202,7 @@ EXTERN_C int Cns_read_t(const char *path, char * buf, size_t size, off_t offset,
 EXTERN_C int Cns_stat_t(const char *path, struct stat *buf);
 EXTERN_C int Cns_opendir_t_xrd(const char *path, int * child_dirid);
 EXTERN_C int Cns_file_create(const char *path, char *actual_path, int filesize);
-EXTERN_C int Cns_download_seg(const char *path, off_t offset, size_t size, char *location, int filesize);
+EXTERN_C int Cns_download_seg(const char *path, off_t offset, size_t size, char *location, int filesize, char *buff);
 EXTERN_C int Cns_cat_segmetadata(const char *path,char * data_path,int *fd,int *filesize, int *mode);
 EXTERN_C int Cns_set_segmetadata_by_fd(const char *path, int fd, int size, char *physic_path, int bitmap_num);
 EXTERN_C int DLL_DECL Cns_setfile_transform_metadata(const char *filename, struct Cns_filestat fst);

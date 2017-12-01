@@ -18,21 +18,24 @@
 #include "Cns.h"
 #include "serrno.h"
 
+#define MEMSIZE (1024*1024+10)
 
-int Cns_download_seg(const char *path, off_t offset, size_t size, char *location, int filesize)
+int Cns_download_seg(const char *path, off_t offset, size_t size, char *location, int filesize, char *buff)
 {
 	char *actual_path;
 	int msglen;
 	char *sbp;
 	char *rbp;
-        char repbuf[REQBUFSZ];
 	char *q;
+	int buff_tag=0;
 	char func[16];
 	char sendbuf[REQBUFSZ];
 	int c;	
 	int res;
 	char server[CA_MAXHOSTNAMELEN+1];
 	struct Cns_api_thread_info *thip;
+	char *repbuf=(char *)malloc(MEMSIZE);
+
 	strcpy(func, "Cns_download_seg");
 	if(Cns_apiinit(&thip))
 		return -1;
@@ -77,22 +80,33 @@ int Cns_download_seg(const char *path, off_t offset, size_t size, char *location
 	 marshall_LONG (sbp, size);
 	marshall_STRING (sbp, location);
 	marshall_LONG(sbp, filesize);
+	if(buff!=NULL){
+		buff_tag=1;
+	}
+	marshall_LONG(sbp, buff_tag);
         msglen = sbp - sendbuf;
         marshall_LONG (q, msglen);      /* update length field */
-
+/*
         while ((c = send2nsd (NULL, server, sendbuf, msglen, NULL, 0)) &&
             serrno == ENSNACT)
                 sleep (RETRYI);
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
-/*
-       while ((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, sizeof(repbuf))) &&
+*/
+        
+	while ((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, MEMSIZE)) &&
             serrno == ENSNACT)
                 sleep (RETRYI);
-        if (c == 0) {
+        if (c == 0 && buff_tag==1) {
                 rbp = repbuf;
                 unmarshall_LONG(rbp, res);
-        }
+                unmarshall_STRING(rbp, buff);
+        }else if(c == 0 && buff_tag==0){
+	        rbp = repbuf;
+                unmarshall_LONG(rbp, res);	
+	}
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
-*/  
-      return res;	
+        free(repbuf);
+	if(c!=0)
+		return c;
+        return res;
 }

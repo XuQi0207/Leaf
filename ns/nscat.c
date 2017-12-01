@@ -52,7 +52,7 @@ int xrdlocal_read(const char *path, size_t size, off_t offset,char *buf)
         int res=0;
         int filesize;
         if((res=sql_check(path, location,&filesize))==0){
-                Cns_download_seg(path, offset, size, location, filesize);
+                Cns_download_seg(path, offset, size, location, filesize, NULL);
                 fd=open(location, O_RDONLY);
                 if(fd==-1){
                         printf("data block open failed\n");
