@@ -39,6 +39,8 @@ int Tflag;
 int uflag;
 int checksumflag;
 int tflag;
+char mdir[128];
+char confile[]="/etc/profile1";
 
 int listdir(char *dir);
 int listdir_t(char *dir);
@@ -70,6 +72,7 @@ int main(int argc, char **argv)
         WSADATA wsadata;
 #endif
 
+	get_conf_value(confile, "MOUNT_DIR", mdir);
         Copterr = 1;
         Coptind = 1;
         while ((c = Cgetopt_long (argc, argv, "tcdilRTu", longopts, NULL)) != EOF) {
@@ -172,7 +175,17 @@ int procpath(char *fullpath)
         char comment[CA_MAXCOMMENTLEN+1];
         struct Cns_filestat statbuf;
         if (tflag){
-            if(Cns_get_Data_daemon(fullpath, &statbuf) < 0){
+		if(strncmp(fullpath, mdir, strlen(mdir))!=0){
+			printf ("%s: not in the mount point\n",fullpath);
+			return 0;
+		}
+		if(pathsplit(fullpath, mdir))
+			return -1;
+		if(*fullpath=='\0'|| strlen(fullpath)==1 && *fullpath=='/'){
+			printf("Just the mount point, input the data DIR follow it\n");
+			return 0;
+		}	
+            	if(Cns_get_Data_daemon(fullpath, &statbuf) < 0){
 			 return (-1);
 		}
 		if(statbuf.filemode& S_IFDIR)

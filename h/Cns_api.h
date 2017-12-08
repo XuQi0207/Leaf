@@ -20,6 +20,7 @@
 #endif
 #include "Cns_constants.h"
 #include "osdep.h"
+#include <json/json.h>
 #include <vector>
 #include <string>
 using namespace std;
@@ -218,6 +219,13 @@ EXTERN_C int xrd_opendir(const char *path, int *child_dirid);
 //EXTERN_C int xrd_readdir(const char *path, char **filename, struct stat *child_stat);
 EXTERN_C int xrd_getattr_fid(int fileid, struct Cns_file_transform_stat * buf);
 EXTERN_C int xrd_readdir(const char *path, vector <string> &filename, vector <struct stat> &child_stat);
+EXTERN_C int get_conf_value(char *file_path, char *key_name, char *value);
+EXTERN_C int splitname(char *path, char *basename);
+EXTERN_C void json_print_array(json_object *obj);
+EXTERN_C void json_print_object(json_object *obj);
+EXTERN_C void json_print_value(json_object *obj);
+EXTERN_C int mkdirs(char *muldir, int mode);
+EXTERN_C int pathsplit(char *path, char *mountpath);
 
 EXTERN_C int DLL_DECL Cns_access _PROTO((const char *, int));
 EXTERN_C int DLL_DECL Cns_apiinit _PROTO((struct Cns_api_thread_info **));

@@ -15,7 +15,6 @@ static char sccsid[] = "@(#)Cns_procreq.c,v 1.61 2004/03/03 08:51:31 CERN IT-PDP
 #include <time.h>
 #include <sys/types.h>
 #include <uuid/uuid.h>
-#include "client.h"
 #include <python3.5m/Python.h>
 #include <fcntl.h>
 #include <time.h>
@@ -4195,8 +4194,6 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
         strcpy(func, "transread");
         nslogit(func, "transread start\n");
 
-//int w =Py_IsInitialized();
-//int h = PyEval_ThreadsInitialized();
 	int nHold=PyGILState_Check();
 	PyGILState_STATE gstate;
 	if(!nHold){
@@ -4246,6 +4243,7 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
 	if(!nHold){
 		PyGILState_Release(gstate);
 	}
+	nslogit(func, "transread over\n");
 }
 
 int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_srv_thread_info *thip, char *py_module_path)
@@ -4813,11 +4811,7 @@ int Cns_srv_createfile_t (int magic,char *req_data,char *clienthost,struct Cns_s
         sprintf (logbuf, "createfile_t %o %s", size, path);
         Cns_logreq (func, logbuf);
 
-	int res2;
-        res=virfile(path,size,0);
-        res2=dohash(path,actual_path,size,0);
-	if(res==0&&res2!=0)
-		res=res2;
+        res=dohash(path,actual_path,size,0);
 	sbp=repbuf;
         marshall_LONG (sbp, res);
 	marshall_STRING (sbp, actual_path);

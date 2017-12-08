@@ -78,8 +78,8 @@ int main(int argc, char *argv[])
 	int offset=0;
 	int tmp=1;
 	int tosize=0;
-	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
-/*
+//	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
+
 	while (tosize<size) {
        		if(xrd_read(actual_path,BUFLEN,offset,buff, argv[1], filesize)==0){
 			printf("%d.read success\n",tmp);
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         		printf("%d.read failed %s\n",tmp, actual_path);
 			return 1;
        		}
-
+/*
 		if(buff!=NULL){
 			lseek(in, offset, SEEK_SET);
 			write(in,buff,strlen(buff));
@@ -97,12 +97,12 @@ int main(int argc, char *argv[])
 	        		printf("%d. over time: %d  %d\n",tmp,stop.tv_sec,stop.tv_usec);
 			}
 		}
-
+*/
 		offset=offset+BUFLEN;
                 tosize=tosize+BUFLEN;
 		tmp++;
 	}
-*/
+/*
 
 		printf("buff length: %d\n",strlen(buff));  
                 if(xrd_read(actual_path,20971521,20971520, NULL, argv[1], filesize)==0){
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 	close(in);
 	free(buff);
 
-	
+*/	
 	/* getattr*/
 /*
 	struct stat buf;

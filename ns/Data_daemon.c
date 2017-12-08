@@ -11,23 +11,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
-#include <json/json.h>
 #include <sys/stat.h>
-#include "Cns.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include "Cns_api.h"
-#include "serrno.h"
-#include "Cgetopt.h"
+//#include "serrno.h"
+//#include "Cgetopt.h"
 #define DIRMAXSIZE 100
-#define ELEMENTTYPE char
 
 /*Variable declaration*/
-static char url[]="http://202.122.37.90:28001/list?";
+//static char url[]="http://202.122.37.90:28001/list?";
+static char conf_file[]="/etc/profile1";
+static char url[256]; 
 static char autiontic[]="uid=0&gid=0&path=";
 static char **filename;
 static int file_num=0;//record the order of files which are stored
 static int num_temp=0;//record the order of structs which are stored
 char temp[11][64]={0};
 char vol_name[11][64]={0};
+char mdir[256];
 struct Cns_filestat *st;
 const char *volumn[]={"ino","mtime","ctime","atime","nlink","uid","dev","gid","path","size","mode"};
 
@@ -98,57 +101,6 @@ void dir_Print(Queue *q){
 	}
 
 }
-
-/*print json for test*/
-void json_print_value(json_object *obj);
-static void json_print_array(json_object *obj) {
-      if(!obj) return;
-      int length=json_object_array_length(obj);
-      int i;
-      for( i=0;i<length;i++) {
-              json_object *val=json_object_array_get_idx(obj,i);
-              json_print_value(val);
-      }
-}
-static void json_print_object(json_object *obj) {
-      if(!obj){
-          printf("over\n");
-          return;
-          }
-      json_object_object_foreach(obj,key,val) {
-          printf("%s => ",key);
-          json_print_value(val);
-      }
- }
-void json_print_value(json_object *obj)
-{
-        if(!obj)
-                return ;
-        json_type type=json_object_get_type(obj);
-        if(type==json_type_boolean){
-                if(json_object_get_boolean(obj)) {
-                 printf("true\n");
-                 } else {
-                        printf("false\n");
-                }
-        }
-        else if(type == json_type_double) {
-          printf("double    %lf",json_object_get_double(obj));
-      } else if(type == json_type_int) {
-          printf("int     %d",json_object_get_int(obj));
-      } else if(type == json_type_string) {
-          printf("string: %s",json_object_get_string(obj));
-     } else if(type == json_type_object) {
-          printf("object\n");
-          json_print_object(obj);
-      } else if(type == json_type_array) {
-          json_print_array(obj);
-          printf("array\n");
-      } else {
-          printf("ERROR\n");
-      }
-      printf("\n");
-  }
 
 /*match the volumns*/
 static int match_volumn(char *vol){
@@ -248,7 +200,7 @@ static void json_object_getkey(json_object *obj){
 }
 /*read the cache file and get the columns*/
 static int process_json(void){
-    FILE *fp=fopen("data.json","r");
+    FILE *fp=fopen("/dev/shm/data.json","r");
     if(fp==NULL){
         printf("no such file \n");
         return -1;
@@ -256,7 +208,7 @@ static int process_json(void){
     /*!!Read from memory!!*/
     fseek(fp,0,SEEK_END);
     int len=ftell(fp);
-    printf("file size is %d\n",len);
+//    printf("file size is %d\n",len);
     fseek(fp,0,SEEK_SET);
     char *buf=(char *)malloc(len*sizeof(char)+1);
     fgets(buf,len+1,fp); 
@@ -272,7 +224,7 @@ static int process_json(void){
     num_temp=0;
     fclose(fp);
     free(buf);
-    remove("data.json");
+    remove("/dev/shm/data.json");
     return 0;
 }
 /*write to the cachefile*/
@@ -291,9 +243,9 @@ static int leaf_getcurl(char *path){
     strcpy(url_path,url);
     strcat(url_path,autiontic);
     strcat(url_path,path);
-    printf("%s\n",url_path);
+//    printf("%s\n",url_path);
     /*!!write into memory!!*/
-    FILE *fp=fopen("data.json","ab+");
+    FILE *fp=fopen("/dev/shm/data.json","ab+");
     curl_global_init(CURL_GLOBAL_ALL);
     curl=curl_easy_init();
     if(curl){
@@ -303,7 +255,7 @@ static int leaf_getcurl(char *path){
         ret=curl_easy_perform(curl);
         if(ret!=CURLE_OK ){
             fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(ret));
-	    remove("data.json");
+	    remove("/dev/shm/data.json");
 	    exit(0);
 	}
         curl_global_cleanup();
@@ -312,57 +264,63 @@ static int leaf_getcurl(char *path){
     free(url_path);
     return 0;
 }
-/*	Cns_splitname - split a pathname into dirname and basename */
-/*
- *  *	"/"	-->	path = "/", basename = "/"
- *   *	"/abc	-->	path = "/", basename = "abc"
- *    *	"/abc/def -->	path = "/abc", basename = "def"
- *     *	"abc"	-->	path = "", basename = "abc"
- *      */
 
-int splitname(char *path, char *basename)
+int touchvf(char *path, int filesize, int flag)
 {
-	char *p;
+        int fd;
+        off_t offset;
+        char path_tmp[100];
+        strcpy(path_tmp, path);
 
-	if (*path == 0)  {
-		return (-1);
-	}
+        fd=open(path_tmp,O_RDWR|O_CREAT,S_IRUSR|S_IRGRP|S_IROTH); 
+        if(-1 == fd) 
+        {
+            perror("creat");
+            return -errno;
+        }
+        if(flag==0){
+                offset = lseek(fd, filesize-1, SEEK_END); 
+                write(fd, "", 1); 
+        }
+        close(fd); 
+        return 0;
 
-	if (*path != '/') {
-		return (-1);
-	}
-
-	/* silently remove trailing slashes */
-
-	p = path + strlen (path) - 1;
-	while (*p == '/' && p != path)
-		*p = '\0';
-
-	if ((p = strrchr (path, '/')) == NULL)
-		p = path - 1;
-	strcpy (basename, (*(p + 1)) ? p + 1 : "/");
-	if (p <= path)	/* path in the form abc or /abc */
-		p++;
-	*p = '\0';
-	return (0);
 }
 
 /*Write the columns into DB & get subdir_path*/
 static int set_metadata(char *basename){
 	int i;
 	int cursubdir_num=0;
+	char mountfilepath[256];
 	strcpy(filename[0], basename);
 	strcpy(st[0].name, basename);
 	for(i=0;i<file_num;i++){
 //		printf("filename    %s   ",filename[i]);
-//		printf_stat(i,st[i]); 
-		 if(Cns_setfile_transform_metadata(filename[i],st[i])){
+//		printf_stat(i,st[i]);
+		sprintf(mountfilepath,"%s%s",mdir,st[i].path);
+		if(access(mountfilepath,0)){
+			if(S_ISDIR(st[i].filemode)){
+				int res=mkdirs(mountfilepath, 0777);
+				if(res!=0){
+					printf("mountdir create fail\n");
+					return 1;
+				}
+			}else{
+				if(touchvf(mountfilepath, st[i].filesize, 0))
+					printf("virfile: %s touch fail\n", mountfilepath);					
+			}
+		}else{
+
+		}		 
+		if(Cns_setfile_transform_metadata(filename[i],st[i])){
 			printf("usage: insert failed\n");	
+			return 1;
 		}
 		if(st[i].filemode & S_IFDIR && i>0){
 			dir_Push(q, st[i].path);
 		}
 	}
+	return 0;
 }
 
 int set_transform_filemetadata(){
@@ -371,11 +329,11 @@ int set_transform_filemetadata(){
     char path[100]; 
     while(!dir_Isempty(q)){
 	    dir_Pop(q,path);
-//	printf("%s\n",path);
 	    leaf_getcurl(path);
 	    splitname(path, basename);
 	    process_json();
-	    set_metadata(basename);
+	    if(set_metadata(basename))
+		return 1;
 	    for(i=0;i<file_num;i++){
      		   free(filename[i]);
    	    }
@@ -388,17 +346,36 @@ int set_transform_filemetadata(){
 }
 
 int main(int argc, char *argv[]){
-    if(argc<2){
-	printf("usage:%s file location\n",argv[0]);
-	exit(0);
-    }
-    if(argv[1][0]!='/'){
-	printf("usage: %s wrong loacation\n",argv[1]);
-    }    
-//    char path[21]="/root/leaf";
-    q=dir_Init();
-    dir_Push(q,argv[1]); 
-    set_transform_filemetadata();
-    return 0;
+	char *ip=(char *)malloc(16); 
+	char *consol=(char *)malloc(16);
+	char *ddir=(char *)malloc(100);
+    	if(get_conf_value(conf_file, "DATA_SERVER_IP", ip)){
+		printf("Configure wrong\n");
+		return 1;
+	}
+    	if(get_conf_value(conf_file, "DATA_SERVER_CONSOL", consol)){
+                printf("Configure wrong\n");
+                return 1;
+	}
+	if(get_conf_value(conf_file, "DATA_DIR", ddir)){
+                printf("Configure wrong\n");
+                return 1;
+	}
+	if(get_conf_value(conf_file, "MOUNT_DIR", mdir)){
+                printf("Configure wrong\n");
+                return 1;
+	}
+	if(access(mdir, 2)==-1){
+		printf("mount point doesnot exit\n");
+		return 1;
+	}
+	sprintf(url, "http://%s:%s/list?", ip, consol);
+    	q=dir_Init();
+	dir_Push(q,ddir); 
+	set_transform_filemetadata();
+	free(ip);
+	free(consol);
+	free(ddir);
+	return 0;
 }
 
