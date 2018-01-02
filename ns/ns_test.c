@@ -78,11 +78,11 @@ int main(int argc, char *argv[])
 	int offset=0;
 	int tmp=1;
 	int tosize=0;
-//	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
 
+//	int in = open("/dev/shm/cp.tmp",O_CREAT|O_RDWR,S_IREAD|S_IWRITE);
 	while (tosize<size) {
-       		if(xrd_read(actual_path,BUFLEN,offset,buff, argv[1], filesize)==0){
-			printf("%d.read success\n",tmp);
+       		if(xrd_read(actual_path,BUFLEN,offset,NULL, argv[1], filesize)==0){
+			printf("%d.read %d success\n",tmp,strlen(buff));
 		}
 	        else{
         		printf("%d.read failed %s\n",tmp, actual_path);
@@ -92,35 +92,33 @@ int main(int argc, char *argv[])
 		if(buff!=NULL){
 			lseek(in, offset, SEEK_SET);
 			write(in,buff,strlen(buff));
-			if(tmp==1||tmp==2){
-				gettimeofday(&stop,0);
-	        		printf("%d. over time: %d  %d\n",tmp,stop.tv_sec,stop.tv_usec);
-			}
+			printf("------%d  %d\n", tmp, offset);
 		}
-*/
-		offset=offset+BUFLEN;
+
+*/		offset=offset+BUFLEN;
                 tosize=tosize+BUFLEN;
 		tmp++;
 	}
-/*
 
-		printf("buff length: %d\n",strlen(buff));  
-                if(xrd_read(actual_path,20971521,20971520, NULL, argv[1], filesize)==0){
+/*
+		char buff2[65536];
+		printf("buff2 length: %d\n",strlen(buff2));  
+                if(xrd_read(actual_path,65536,0, buff2, argv[1], filesize)==0){
                         printf("%d.read success\n",tmp);
                 }
                 else{
                         printf("%d.read failed %s\n",tmp, actual_path);
                         return 1;
                 }
-		if(buff!=NULL){
-			printf("buff length: %d\n",strlen(buff));
-                        write(in,buff,strlen(buff));
+		if(buff2!=NULL){
+			printf("buff2 length: %d\n",strlen(buff2));
+                        write(in,buff2,16384);
 		}
-
-	close(in);
+*/
+//	close(in);
 	free(buff);
 
-*/	
+	
 	/* getattr*/
 /*
 	struct stat buf;

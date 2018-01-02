@@ -21,8 +21,8 @@
 #include "Cns_constants.h"
 #include "osdep.h"
 #include <json/json.h>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 int *C__Cns_errno();

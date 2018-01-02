@@ -35,9 +35,8 @@ static char sccsid[] = "@(#)Cns_procreq.c,v 1.61 2004/03/03 08:51:31 CERN IT-PDP
 
 #define MAXPATHLEN 1023 //the largest size of the file path 
 #define UNIT_SIZE (1024*1024)
-#define PATH "/data/xrootdfs/data/"
+#define PATH "/cdfs_data/"
 #define VIRPATH "/data/xrootdfs/file/"
-//#define VIRPATH "/testcode/c_open/test/download/"
 
 #include "marshall.h"
 #include "Cgrp.h"
@@ -4193,7 +4192,6 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
         char func[20];
         strcpy(func, "transread");
         nslogit(func, "transread start\n");
-
 	int nHold=PyGILState_Check();
 	PyGILState_STATE gstate;
 	if(!nHold){
@@ -4201,11 +4199,11 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
 	}
 	Py_BEGIN_ALLOW_THREADS  
 	Py_BLOCK_THREADS
+/*
 	PyObject * pModule = NULL;
         PyRun_SimpleString("import sys");
         PyRun_SimpleString("import os");
         PyRun_SimpleString("import string");
-
 	char do_append[128];
 	strcpy(do_append, "sys.path.append('");
 	strcat(do_append, py_module_path);
@@ -4226,20 +4224,29 @@ void transread(const char *host,const char *filepath,const char *targetdir,const
 	PyTuple_SetItem(pArgs,4,Py_BuildValue("s",gid));
 	PyTuple_SetItem(pArgs,5,Py_BuildValue("i",position));
 	PyTuple_SetItem(pArgs,6,Py_BuildValue("i",size));
-	pFunc = PyObject_GetAttrString(pModule,"readentrance");
+	pFunc = PyObject_GetAttrString(pModule,"process_read");
 	if(pFunc == NULL)
 	{
 		nslogit(func, "client function parameter post failed\n");
 	}
-	
 	result = PyEval_CallObject(pFunc,pArgs);
 	Py_DECREF(pArgs);
 	if(result == NULL){
 		nslogit(func, "client function call failed\n");
 	}
 	Py_DECREF(result);
+	Py_DECREF(pFunc);
+	Py_DECREF(pModule);
+*/
+        PyRun_SimpleString("import subprocess");
+	char cmd[]="/usr/local/bin/python3";
+	char script[]="/home/xuq/lcs/ns/runclient.py";
+	char tmp[256];
+	sprintf(tmp, "subprocess.Popen(['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'])", cmd, script, host, filepath, targetdir, uid, gid, position, size);
+	PyRun_SimpleString(tmp);
+	
 	Py_UNBLOCK_THREADS
-	Py_END_ALLOW_THREADS
+	Py_END_ALLOW_THREADS	
 	if(!nHold){
 		PyGILState_Release(gstate);
 	}
@@ -4263,7 +4270,6 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 	size_t size;
 	int filesize;
 	int buff_tag;
-	char *buff=(char *)malloc(1024*1024+1);
 	char *repbuf=(char *)malloc(1024*1024+10);
 
         strcpy (func, "Cns_srv_download_seg");
@@ -4283,6 +4289,7 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 
         sprintf (logbuf, "Cns_srv_download_seg %s", filepath);
         Cns_logreq (func, logbuf);
+	char *buff=(char *)malloc(size);
 	char *file_tmp=(char *)malloc(strlen(filepath)+1);
 	strcpy(file_tmp, filepath);
 	if (Cns_splitname (cwd, file_tmp, basename))
@@ -4474,6 +4481,7 @@ int Cns_srv_download_seg(int magic,char *req_data,char *clienthost,struct Cns_sr
 			r=pread(fd, buff, size, offset);
 		}
 		close(fd);
+		int tt=strlen(buff);
 		if(r!=-1){
 			marshall_LONG(sbp, 0);
 			marshall_STRING(sbp, buff);

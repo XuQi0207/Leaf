@@ -1,0 +1,40 @@
+import subprocess
+import threading
+'''
+import logging
+'''
+'''
+logging.basicConfig(level=logging.DEBUG,
+                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%a, %d %b %Y %H:%M:%S',
+                filename='/usr/spool/ns/client_log',
+                filemode='a+')
+'''
+
+def process_read(host,filepath,targetdir,uid,gid,pos,size):
+#        logging.debug("1p.pid: "+str(os.getpid()))
+#        try:
+#                logging.debug("cwd:"+os.getcwd()+"	uid:"+str(os.getuid())+"	gid:"+str(os.getgid()))
+                p=subprocess.Popen(['/usr/local/bin/python3', '/home/xuq/lcs/ns/runclient.py', host,filepath,targetdir,uid,gid,str(pos),str(size)])
+                p.wait()
+#                logging.debug("-----------"+str(p.pid)+"	"+str(p.returncode))
+#        except subprocess.CalledProcessError as e:
+#                logging.debug("Exception---"+str(e))
+
+
+if __name__=="__main__":
+        filename='/cdfs_data/log'
+        blocksize=10485760
+        offset=0
+        thread_list=[]
+        i=0
+#        logging.debug("0p.pid: "+str(os.getpid()))
+        for i in range(20):
+                t=threading.Thread(target=process_read, args=("202.122.37.90:28001","/root/leaf/pytoc/upload/200M",filename,"0","0",str(offset+blocksize*i),str(blocksize)))
+                t.setDaemon(True)
+                thread_list.append(t)
+        for t in thread_list:
+                t.start()
+        for t in thread_list:
+                t.join()
+

@@ -60,7 +60,9 @@ int Cns_main(struct main_args *main_args);
 int get_conf_value(char *file_path, char *key_name, char *value);
 
 void python_initialize()
-{
+{	
+	char func[]="python_initial";
+	nslogit(func, "start to initial\n");
         Py_Initialize();
         if(!Py_IsInitialized())
         {
@@ -68,12 +70,18 @@ void python_initialize()
         }
 
 	PyEval_InitThreads();
+	int nHold2=PyGILState_Check();
+	nslogit(func, "GIL: %d\n", nHold2);
 	if(PyEval_ThreadsInitialized()){
 		PyEval_SaveThread();
 	}
+	int nHold22=PyGILState_Check();
+	nslogit(func, "GIL: %d\n", nHold22);
 }
 void python_destroy()
 {
+	char func[]="python_destroy";
+	nslogit(func, "start to destroy\n");
 	memset(localfilepath, 0, 128);
 	close(localfileid);
 	int localfileid=-1;

@@ -142,7 +142,6 @@ int xrd_read(const char *actual_path, size_t size, off_t offset,char *buff, char
 */
 //	Cns_get_virpath(actual_path_t, path_t);/*物理路径查询远程路径*/
 //        if((res=sql_check(path_t, location, &filesize))==0){/*在open中一次解决*/
-
 		res=Cns_download_seg(path_t, offset, size, location, filesize, buff);
 //		if(buff!=NULL){
 //			res=Cns_read_t(location, buff, size, offset, path_t);

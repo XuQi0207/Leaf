@@ -35,7 +35,7 @@ int Cns_download_seg(const char *path, off_t offset, size_t size, char *location
 	char server[CA_MAXHOSTNAMELEN+1];
 	struct Cns_api_thread_info *thip;
 	char *repbuf=(char *)malloc(MEMSIZE);
-
+	char *buff_tmp=(char *)malloc(size*2);
 	strcpy(func, "Cns_download_seg");
 	if(Cns_apiinit(&thip))
 		return -1;
@@ -92,20 +92,21 @@ int Cns_download_seg(const char *path, off_t offset, size_t size, char *location
                 sleep (RETRYI);
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
 */
-        
 	while ((c = send2nsd (NULL, server, sendbuf, msglen, repbuf, MEMSIZE)) &&
             serrno == ENSNACT)
                 sleep (RETRYI);
         if (c == 0 && buff_tag==1) {
                 rbp = repbuf;
                 unmarshall_LONG(rbp, res);
-                unmarshall_STRING(rbp, buff);
+                unmarshall_STRING(rbp, buff_tmp);
+		strncpy(buff, buff_tmp, size);
         }else if(c == 0 && buff_tag==0){
 	        rbp = repbuf;
                 unmarshall_LONG(rbp, res);	
 	}
         if (c && serrno == SENAMETOOLONG) serrno = ENAMETOOLONG;
         free(repbuf);
+	free(buff_tmp);
 	if(c!=0)
 		return c;
         return res;
